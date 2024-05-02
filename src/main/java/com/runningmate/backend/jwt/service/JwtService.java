@@ -60,11 +60,12 @@ public class JwtService implements JwtServiceInterface {
     }
 
     @Override
-    public String createRefreshToken() {
+    public String createRefreshToken(String username) {
         Algorithm algorithm = Algorithm.HMAC512(secret);
         try {
             String token = JWT.create()
                     .withSubject(REFRESH_TOKEN_SUBJECT)
+                    .withClaim(USERNAME_CLAIM, username)
                     .withExpiresAt(new Date(System.currentTimeMillis() + (refreshTokenExpiration * 1000)))
                     .sign(algorithm);
 
@@ -112,7 +113,7 @@ public class JwtService implements JwtServiceInterface {
     public Optional<String> extractUsername(String accessToken) {
         try {
             Algorithm algorithm = Algorithm.HMAC512(secret);
-            JWTVerifier verifier = JWT.require(algorithm).withSubject(ACCESS_TOKEN_SUBJECT).build();
+            JWTVerifier verifier = JWT.require(algorithm).build();
             return Optional.ofNullable(verifier.verify(accessToken).getClaim(USERNAME_CLAIM).asString());
         } catch (Exception e) {
             return Optional.empty();

@@ -9,7 +9,7 @@ public interface JwtServiceInterface {
 
     String createAccessToken(String username);
 
-    String createRefreshToken();
+    String createRefreshToken(String username);
 
     void updateRefreshToken(String username, String refreshToken);
     void removeRefreshToken(String username);
