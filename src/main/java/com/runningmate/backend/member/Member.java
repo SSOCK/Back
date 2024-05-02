@@ -35,4 +35,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;//권한 -> USER, ADMIN
 
+    @Column(length = 1000)
+    private String refreshtoken;
+
+    public void updateRefreshToken(String token) {
+        this.refreshtoken = token;
+    }
+
+    public void removeRefreshToken() {
+        this.refreshtoken = null;
+    }
 }

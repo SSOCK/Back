@@ -1,6 +1,7 @@
 package com.runningmate.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.runningmate.backend.jwt.service.JwtService;
 import com.runningmate.backend.login.handler.LoginFailureHandler;
 import com.runningmate.backend.login.handler.LoginSuccessJWTProvideHandler;
 import com.runningmate.backend.member.service.LoginService;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration {
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
     private final LoginService loginService;
 
@@ -54,12 +56,12 @@ public class SecurityConfiguration {
 
     @Bean
     public LoginSuccessJWTProvideHandler loginSuccessJWTProvideHandler(){
-        return new LoginSuccessJWTProvideHandler();
+        return new LoginSuccessJWTProvideHandler(jwtService, objectMapper);
     }
 
     @Bean
     public LoginFailureHandler loginFailureHandler(){
-        return new LoginFailureHandler();
+        return new LoginFailureHandler(objectMapper);
     }
 
     @Bean
