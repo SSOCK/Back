@@ -26,7 +26,7 @@ public class LoginSuccessJWTProvideHandler extends SimpleUrlAuthenticationSucces
 
         String username = userDetails.getUsername();
         String accessToken = jwtService.createAccessToken(username);
-        String refreshToken = jwtService.createRefreshToken();
+        String refreshToken = jwtService.createRefreshToken(username);
         jwtService.updateRefreshToken(username, refreshToken);
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
@@ -35,6 +35,6 @@ public class LoginSuccessJWTProvideHandler extends SimpleUrlAuthenticationSucces
         String json = objectMapper.writeValueAsString(map);
         response.setContentType("application/json");
         response.getWriter().write(json);
-        
+
     }
 }
