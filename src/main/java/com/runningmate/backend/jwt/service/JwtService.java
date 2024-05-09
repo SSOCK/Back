@@ -3,6 +3,8 @@ package com.runningmate.backend.jwt.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.runningmate.backend.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +44,7 @@ public class JwtService implements JwtServiceInterface {
     private static final String BEARER = "Bearer ";
 
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public String createAccessToken(String username) {
@@ -121,28 +125,23 @@ public class JwtService implements JwtServiceInterface {
     }
 
     @Override
-    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-        response.setHeader(accessTokenHeader, accessToken);
-    }
-
-    @Override
-    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshTokenHeader, refreshToken);
-    }
-
-    @Override
-    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
+        ObjectNode tokenJson = objectMapper.createObjectNode();
+        tokenJson.put("access-token", accessToken)
+                .put("refresh-token", refreshToken);
 
-        setAccessTokenHeader(response, accessToken);
-        setRefreshTokenHeader(response, refreshToken);
+        response.getWriter().write(objectMapper.writeValueAsString(tokenJson));
+
     }
 
     @Override
-    public void sendAccessToken(HttpServletResponse response, String accessToken) {
+    public void sendAccessToken(HttpServletResponse response, String accessToken) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
+        ObjectNode tokenJson = objectMapper.createObjectNode();
+        tokenJson.put("access-token", accessToken);
 
-        setAccessTokenHeader(response, accessToken);
+        response.getWriter().write(objectMapper.writeValueAsString(tokenJson));
     }
 
     @Override

@@ -29,12 +29,11 @@ public class LoginSuccessJWTProvideHandler extends SimpleUrlAuthenticationSucces
         String refreshToken = jwtService.createRefreshToken(username);
         jwtService.updateRefreshToken(username, refreshToken);
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", username + " login success!");
-        String json = objectMapper.writeValueAsString(map);
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("message", username + " login success!");
+//        String json = objectMapper.writeValueAsString(map);
         response.setContentType("application/json");
-        response.getWriter().write(json);
+//        response.getWriter().write(json);
 
     }
 }
