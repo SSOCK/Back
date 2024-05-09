@@ -34,6 +34,5 @@ public class LoginSuccessJWTProvideHandler extends SimpleUrlAuthenticationSucces
 //        String json = objectMapper.writeValueAsString(map);
         response.setContentType("application/json");
 //        response.getWriter().write(json);
-
     }
 }
