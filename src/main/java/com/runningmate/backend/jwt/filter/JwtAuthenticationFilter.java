@@ -40,7 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             member -> {
                                 if (member.getRefreshtoken() == refreshToken) {
                                     String newAccessToken = jwtService.createAccessToken(username);
-                                    jwtService.sendAccessToken(response, newAccessToken);
+                                    try {
+                                        jwtService.sendAccessToken(response, newAccessToken);
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             }
                     )

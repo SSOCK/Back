@@ -3,6 +3,7 @@ package com.runningmate.backend.jwt.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public interface JwtServiceInterface {
@@ -18,11 +19,8 @@ public interface JwtServiceInterface {
     Optional<String> extractRefreshToken(HttpServletRequest request);
     Optional<String> extractUsername(String accessToken);
 
-    void setAccessTokenHeader(HttpServletResponse response, String accessToken);
-    void setRefreshTokenHeader(HttpServletResponse response, String refreshToken);
-
-    void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken);
-    void sendAccessToken(HttpServletResponse response, String accessToken);
+    void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException;
+    void sendAccessToken(HttpServletResponse response, String accessToken) throws IOException;
 
     boolean isTokenValid(String token);
 
