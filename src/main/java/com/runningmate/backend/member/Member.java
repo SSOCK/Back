@@ -1,9 +1,7 @@
 package com.runningmate.backend.member;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Table(name = "member")
 @Getter
@@ -22,11 +20,10 @@ public class Member {
     @Column(nullable = false, length = 20, unique = true)
     private String username;//아이디
 
-    @Column
+    @Column(nullable = false, length = 20)
     private String password;//비밀번호
 
-    @Column(nullable = false, length = 30, unique = true)
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "Need to be valid email")
+    @Column(nullable = false, length = 50, unique = true)
     private String email;//이메일
 
     @Column(nullable = false, length = 30)
