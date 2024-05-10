@@ -1,4 +1,4 @@
-package com.runningmate.backend.controller;
+package com.runningmate.backend.member.controller;
 
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberSignupRequest;
