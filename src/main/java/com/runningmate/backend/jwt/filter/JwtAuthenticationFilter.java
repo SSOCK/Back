@@ -18,19 +18,30 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final List<String> SKIP_ENDPOINTS = Arrays.asList("/login", "/signup");
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/login")) {
-            filterChain.doFilter(request, response);
-            return;
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        for (String prefix : SKIP_ENDPOINTS) {
+            if (path.startsWith(prefix)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String refreshToken = jwtService.extractRefreshToken(request).filter(token -> jwtService.isTokenValid(token)).orElse(null);
 
@@ -70,4 +81,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("Went through extracting username from accessToken");
         filterChain.doFilter(request, response);
     }
+
+
 }
