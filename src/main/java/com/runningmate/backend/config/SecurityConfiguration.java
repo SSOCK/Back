@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(((authorizeRequest) ->
                         authorizeRequest
-                                .requestMatchers("/login", "/signup").permitAll()
+                                .requestMatchers("/login", "/signup", "/auth/**").permitAll()
                                 .anyRequest().authenticated()));
         http.addFilterAfter(jsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), JsonUsernamePasswordAuthenticationFilter.class);
