@@ -31,12 +31,8 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
-        try {
-            Member newMember = memberService.signup(memberSignupRequest);
-            return ResponseEntity.ok().body(memberSignupRequest.getUsername() + " successfully registered.");
-        } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        Member newMember = memberService.signup(memberSignupRequest);
+        return ResponseEntity.ok().body(memberSignupRequest.getUsername() + " successfully registered.");
     }
 
 }
