@@ -24,7 +24,7 @@ public class Member {
     @Column(nullable = false, length = 20, unique = true)
     private String username;//아이디
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 72)
     private String password;//비밀번호
 
     @Column(nullable = false, length = 50, unique = true)
@@ -45,7 +45,7 @@ public class Member {
 
     @LastModifiedDate
     @Column
-    private LocalDateTime updatedAt;
+    private LocalDateTime modifiedAt;
 
     @PrePersist
     protected void onCreate() {
@@ -54,7 +54,7 @@ public class Member {
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.modifiedAt = LocalDateTime.now();
     }
 
     public void updateRefreshToken(String token) {
