@@ -37,7 +37,7 @@ jobs:
     - name: Build with Gradle
       run: |
         chmod +x gradlew
-        ./gradlew build
+        ./gradlew build --info
 
     - name: Docker Login
       # You may pin to the exact commit or the version.
