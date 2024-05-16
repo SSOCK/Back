@@ -39,6 +39,16 @@ public class Post {
     @Column
     private LocalDateTime modifiedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.modifiedAt = LocalDateTime.now();
+    }
+
     public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
