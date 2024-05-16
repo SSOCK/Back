@@ -72,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                             .password(member.getPassword())
                                             .roles(member.getRole().name())
                                             .build();
+                                    //TODO: Create Custom UserDetails to store member so i do not need to do another findByUsername in controller
                                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesMapper.mapAuthorities(user.getAuthorities()));
                                     SecurityContextHolder.getContext().setAuthentication(authentication);
                                 }
