@@ -1,4 +1,4 @@
-package com.runningmate.backend.member.exception;
+package com.runningmate.backend.exception;
 
 import java.util.List;
 
