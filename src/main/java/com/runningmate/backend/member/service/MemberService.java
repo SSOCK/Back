@@ -1,12 +1,12 @@
 package com.runningmate.backend.member.service;
 
+import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberSignupRequest;
 import com.runningmate.backend.member.Role;
-import com.runningmate.backend.member.exception.FieldExistsException;
+import com.runningmate.backend.exception.FieldExistsException;
 import com.runningmate.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,11 @@ public class MemberService {
 
         memberRepository.save(member);
         return member;
+    }
+
+    public Member getMemberByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Member with User Name: " + username + " not found."));
     }
 
     private List<String> checkExistingFields(MemberSignupRequest request) {
