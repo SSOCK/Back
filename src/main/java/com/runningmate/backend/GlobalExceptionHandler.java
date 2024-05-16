@@ -18,7 +18,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(FieldExistsException.class)
-    public ResponseEntity<Map<String, List<String>>> handleFieldExistsException(FieldExistsException ee) {
+    public ResponseEntity<Map<String, List<String>>> handleFieldExistsException(FieldExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("exists", e.getExists()));
     }
 
