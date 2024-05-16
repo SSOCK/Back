@@ -22,15 +22,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> userSignup(@Valid @RequestBody MemberSignupRequest memberSignupRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> {
-                errors.put(error.getField(), error.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        }
-
+    public ResponseEntity<Object> userSignup(@Valid @RequestBody MemberSignupRequest memberSignupRequest) {
         Member newMember = memberService.signup(memberSignupRequest);
         return ResponseEntity.ok().body(memberSignupRequest.getUsername() + " successfully registered.");
     }
