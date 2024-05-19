@@ -26,7 +26,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/{postId}/like")
-    public void toggleLike(@PathVariable Long postId, Authentication authentication) {
+    public void toggleLike(@PathVariable(name = "postId") Long postId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         postService.toggleLike(postId, userDetails.getUsername());
     }
