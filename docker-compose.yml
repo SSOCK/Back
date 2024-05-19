@@ -2,7 +2,7 @@ version: '3'
 
 services:
   spring-app:
-    image: peageon/ssock:latest
+    image: ghcr.io/peageon/ssock:latest
     ports:
       - "8080:8080"
     depends_on:
