@@ -25,7 +25,7 @@ public class PostService {
 
     public Post createPost(CreatePostRequest postRequest, String username) {
         Member member = memberService.getMemberByUsername(username);
-        Post post = postRequest.toEntity(member);
+        Post post = postRequest.toEntity(Member.builder().id(member.getId()).build());
         return postRepository.save(post);
     }
 
