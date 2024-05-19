@@ -51,13 +51,12 @@ jobs:
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.GHCR_PASSWORD }}
         
-    - name: Build and push
-      uses: docker/build-push-action@v5.3.0
-      with:
-        context: ./
-        push: true
-        tags: ghcr.io/peageon/ssock:latest
+    - name: Build Docker
+      run: |
+        docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/ssock:latest .
 
+    - name: Push Docker
+      run: docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/ssock:latest
 
   deploy: 
   
