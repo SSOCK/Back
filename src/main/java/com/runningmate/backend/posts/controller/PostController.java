@@ -24,4 +24,11 @@ public class PostController {
         return postService.createPost(createPostRequest, userDetails.getUsername());
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/{postId}/like")
+    public void toggleLike(@PathVariable Long postId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        postService.toggleLike(postId, userDetails.getUsername());
+    }
+
 }

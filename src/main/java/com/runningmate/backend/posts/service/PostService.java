@@ -5,6 +5,7 @@ import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Post;
 import com.runningmate.backend.posts.dto.CreatePostRequest;
+import com.runningmate.backend.posts.repository.PostLikeRepository;
 import com.runningmate.backend.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostLikeService postLikeService;
     private final MemberService memberService;
 
 
@@ -38,6 +40,11 @@ public class PostService {
 
     public Optional<Post> getPostById(Long id) {
         return postRepository.findById(id);
+    }
+
+    public boolean toggleLike(Long postId, String username) {
+        Member member = memberService.getMemberByUsername(username);
+        return postLikeService.toggleLike(postId, member.getId());
     }
 
     //TODO: Might have to let the client know if a post with Id does not exist.
