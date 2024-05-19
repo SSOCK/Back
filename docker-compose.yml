@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  spring-app:
+    image: peageon/ssock:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/test_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    networks:
+      - backend
+  postgres-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+networks:
+  backend:
