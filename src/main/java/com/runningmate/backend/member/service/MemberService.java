@@ -4,6 +4,7 @@ import com.runningmate.backend.exception.ExistsConflictException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.member.dto.MemberSignupRequest;
 import com.runningmate.backend.member.Role;
 import com.runningmate.backend.exception.FieldExistsException;
@@ -24,7 +25,7 @@ public class MemberService {
     private final FollowRepository followRepository;
 
 
-    public Member signup(MemberSignupRequest memberSignupRequest) throws FieldExistsException {
+    public MemberDto signup(MemberSignupRequest memberSignupRequest) throws FieldExistsException {
         List<String> exists = checkExistingFields(memberSignupRequest);
 
         if (!exists.isEmpty()) {
@@ -33,8 +34,8 @@ public class MemberService {
 
         Member member = createMember(memberSignupRequest);
 
-        memberRepository.save(member);
-        return member;
+        Member savedMember = memberRepository.save(member);
+        return MemberDto.fromEntity(savedMember);
     }
 
     public Member getMemberByUsername(String username) {

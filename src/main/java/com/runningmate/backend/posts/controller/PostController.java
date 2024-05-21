@@ -1,6 +1,7 @@
 package com.runningmate.backend.posts.controller;
 
 import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.dto.PostResponseDto;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Post;
 import com.runningmate.backend.posts.dto.CreatePostRequest;
@@ -25,14 +26,14 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Post createNewPost(@Valid @RequestBody CreatePostRequest createPostRequest, Authentication authentication) {
+    public PostResponseDto createNewPost(@Valid @RequestBody CreatePostRequest createPostRequest, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return postService.createPost(createPostRequest, userDetails.getUsername());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("")
-    public List<Post> getRecentPosts(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<PostResponseDto> getRecentPosts(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Member user = memberService.getMemberByUsername(username);
         return postService.getRecentPostsOfFollowedMembers(user);

@@ -3,11 +3,11 @@ package com.runningmate.backend.posts.service;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.dto.PostResponseDto;
 import com.runningmate.backend.member.repository.FollowRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Post;
 import com.runningmate.backend.posts.dto.CreatePostRequest;
-import com.runningmate.backend.posts.repository.PostLikeRepository;
 import com.runningmate.backend.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -29,10 +29,11 @@ public class PostService {
     private final FollowRepository followRepository;
 
 
-    public Post createPost(CreatePostRequest postRequest, String username) {
+    public PostResponseDto createPost(CreatePostRequest postRequest, String username) {
         Member member = memberService.getMemberByUsername(username);
         Post post = postRequest.toEntity(Member.builder().id(member.getId()).build());
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        return PostResponseDto.fromEntity(savedPost);
     }
 
     public Post updatePost(Long id, Post updatePostDTO) {//TODO: change to PostDTO
@@ -44,14 +45,16 @@ public class PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + id));
     }
 
-    public List<Post> getRecentPostsOfFollowedMembers(Member user) {
+    public List<PostResponseDto> getRecentPostsOfFollowedMembers(Member user) {
         List<Follow> follows = followRepository.findByFollower(user);
         List<Member> followedMembers = follows.stream()
                 .map(Follow::getFollowing)
                 .collect(Collectors.toList());
 
         Pageable pageable = PageRequest.of(0, 30);
-        return postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
+        List<Post> posts = postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
+
+        return posts.stream().map(PostResponseDto::fromEntity).collect(Collectors.toList());
     }
 
     public Optional<Post> getPostById(Long id) {

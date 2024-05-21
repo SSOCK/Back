@@ -1,6 +1,6 @@
 package com.runningmate.backend.member.controller;
 
-import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.member.dto.MemberSignupRequest;
 import com.runningmate.backend.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -17,7 +17,7 @@ public class SignupController {
 
     @PostMapping("/signup")
     public ResponseEntity<Object> userSignup(@Valid @RequestBody MemberSignupRequest memberSignupRequest) {
-        Member newMember = memberService.signup(memberSignupRequest);
-        return ResponseEntity.ok().body(memberSignupRequest);
+        MemberDto newMember = memberService.signup(memberSignupRequest);
+        return ResponseEntity.ok().body(newMember);
     }
 }
