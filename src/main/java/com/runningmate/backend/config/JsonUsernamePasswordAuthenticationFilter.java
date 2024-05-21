@@ -23,7 +23,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
     private static final String CONTENT_TYPE = "application/json";
     private final ObjectMapper objectMapper; //to parse json
 
-    private static final String USERNAME_KEY="username";
+    private static final String EMAIL_KEY="email";
     private static final String PASSWORD_KEY="password";
     private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD);
@@ -33,6 +33,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
         this.objectMapper = objectMapper;
     }
 
+    //TODO: Fix 500 error from occurring when client sends wrong data type
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if(request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)  ) {
@@ -41,12 +42,12 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
 
         String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
 
-        Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
+        Map<String, String> emailPasswordMap = objectMapper.readValue(messageBody, Map.class);
 
-        String username = usernamePasswordMap.get(USERNAME_KEY);
-        String password = usernamePasswordMap.get(PASSWORD_KEY);
+        String email = emailPasswordMap.get(EMAIL_KEY);
+        String password = emailPasswordMap.get(PASSWORD_KEY);
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);//principal 과 credentials 전달
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);//principal 과 credentials 전달
 
         return this.getAuthenticationManager().authenticate(authRequest);
     }

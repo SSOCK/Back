@@ -1,30 +1,34 @@
 package com.runningmate.backend.member.controller;
 
 import com.runningmate.backend.member.Member;
-import com.runningmate.backend.member.MemberSignupRequest;
 import com.runningmate.backend.member.service.MemberService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<Object> userSignup(@Valid @RequestBody MemberSignupRequest memberSignupRequest) {
-        Member newMember = memberService.signup(memberSignupRequest);
-        return ResponseEntity.ok().body(memberSignupRequest);
+    @ResponseStatus(value = HttpStatus.OK)
+    @PostMapping("/{memberId}/follow")
+    public void followUser(@PathVariable(name = "memberId") Long memberId, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        Member follower = memberService.getMemberByUsername(username);
+        Member following = memberService.getMemberById(memberId);
+        memberService.followUser(follower, following);
     }
 
+    @ResponseStatus(value = HttpStatus.OK)
+    @PostMapping("/{memberId}/unfollow")
+    public void unfollowUser(@PathVariable(name = "memberId") Long memberId, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        Member follower = memberService.getMemberByUsername(username);
+        Member following = memberService.getMemberById(memberId);
+        memberService.unfollowUser(follower, following);
+    }
 }

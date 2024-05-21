@@ -1,4 +1,4 @@
-package com.runningmate.backend.member;
+package com.runningmate.backend.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

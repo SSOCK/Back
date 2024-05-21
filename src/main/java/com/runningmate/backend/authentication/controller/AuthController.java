@@ -1,6 +1,7 @@
 package com.runningmate.backend.authentication.controller;
 
 import com.runningmate.backend.authentication.service.AuthService;
+import com.runningmate.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,4 +22,7 @@ public class AuthController {
         result.put("exists", exists);
         return result;
     }
+
+    private final MemberService memberService;
+
 }
