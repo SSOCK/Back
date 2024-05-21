@@ -1,6 +1,7 @@
 package com.runningmate.backend;
 
 import com.runningmate.backend.exception.ErrorMessageResponseDTO;
+import com.runningmate.backend.exception.ExistsConflictException;
 import com.runningmate.backend.exception.FieldExistsException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FieldExistsException.class)
     public ResponseEntity<Map<String, List<String>>> handleFieldExistsException(FieldExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("exists", e.getExists()));
+    }
+
+    @ExceptionHandler(ExistsConflictException.class)
+    public ResponseEntity<ErrorMessageResponseDTO> handleAlreadyFollowingException(ExistsConflictException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
