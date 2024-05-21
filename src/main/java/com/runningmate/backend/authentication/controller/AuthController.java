@@ -1,12 +1,8 @@
 package com.runningmate.backend.authentication.controller;
 
 import com.runningmate.backend.authentication.service.AuthService;
-import com.runningmate.backend.member.Member;
-import com.runningmate.backend.member.MemberSignupRequest;
 import com.runningmate.backend.member.service.MemberService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -28,9 +24,4 @@ public class AuthController {
 
     private final MemberService memberService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<Object> userSignup(@Valid @RequestBody MemberSignupRequest memberSignupRequest) {
-        Member newMember = memberService.signup(memberSignupRequest);
-        return ResponseEntity.ok().body(memberSignupRequest);
-    }
 }
