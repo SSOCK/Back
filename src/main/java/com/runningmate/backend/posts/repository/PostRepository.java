@@ -2,6 +2,7 @@ package com.runningmate.backend.posts.repository;
 
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.posts.Post;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,5 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByMember(Member member);
     List<Post> findAllByCreatedAt(LocalDate date);
-
+    List<Post> findByMemberInOrderByCreatedAtDesc(List<Member> members, Pageable pageable);
 }

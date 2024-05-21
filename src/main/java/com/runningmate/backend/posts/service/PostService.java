@@ -1,18 +1,23 @@
 package com.runningmate.backend.posts.service;
 
 import com.runningmate.backend.exception.ResourceNotFoundException;
+import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.repository.FollowRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Post;
 import com.runningmate.backend.posts.dto.CreatePostRequest;
 import com.runningmate.backend.posts.repository.PostLikeRepository;
 import com.runningmate.backend.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeService postLikeService;
     private final MemberService memberService;
+    private final FollowRepository followRepository;
 
 
     public Post createPost(CreatePostRequest postRequest, String username) {
@@ -36,6 +42,16 @@ public class PostService {
                     return postRepository.save(post);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + id));
+    }
+
+    public List<Post> getRecentPostsOfFollowedMembers(Member user) {
+        List<Follow> follows = followRepository.findByFollower(user);
+        List<Member> followedMembers = follows.stream()
+                .map(Follow::getFollowing)
+                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(0, 30);
+        return postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
     }
 
     public Optional<Post> getPostById(Long id) {
