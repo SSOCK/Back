@@ -47,6 +47,7 @@ public class Member {
     @Column
     private LocalDateTime modifiedAt;
 
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
