@@ -1,7 +1,7 @@
 package com.runningmate.backend.member.controller;
 
 import com.runningmate.backend.member.Member;
-import com.runningmate.backend.member.MemberSignupRequest;
+import com.runningmate.backend.member.dto.MemberSignupRequest;
 import com.runningmate.backend.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

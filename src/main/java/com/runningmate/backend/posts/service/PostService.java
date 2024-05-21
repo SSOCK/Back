@@ -64,9 +64,9 @@ public class PostService {
     }
 
     //TODO: Might have to let the client know if a post with Id does not exist.
-//    public void deletePost(Long id) {
-//        postRepository.deleteById(id);
-//    }
+    //    public void deletePost(Long id) {
+    //        postRepository.deleteById(id);
+    //    }
 
     public List<Post> getPostsByMember(Member member) {
         return postRepository.findAllByMember(member);

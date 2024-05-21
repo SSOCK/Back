@@ -4,7 +4,7 @@ import com.runningmate.backend.exception.ExistsConflictException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
-import com.runningmate.backend.member.MemberSignupRequest;
+import com.runningmate.backend.member.dto.MemberSignupRequest;
 import com.runningmate.backend.member.Role;
 import com.runningmate.backend.exception.FieldExistsException;
 import com.runningmate.backend.member.repository.FollowRepository;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
