@@ -25,8 +25,13 @@ jobs:
           mkdir -p ./src/main/resources
           touch ./src/main/resources/application.properties
           echo "${{secrets.APPLICATION_YML}}" > ./src/main/resources/application.properties
-          touch ./src/main/resources/googlecloudstoragekey.json
-          echo "${{secrets.GCS_JSON_KEY}}" > ./src/main/resources/googlecloudstoragekey.json
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: "googlecloudstoragekey.json"
+          json: ${{ secrets.GCS_JSON_KEY}}
+          dir: 'src/main/resources/'
 
       - name: Build with Gradle
         run: |
