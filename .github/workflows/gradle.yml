@@ -20,11 +20,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
         
-      - name: Copy application.properties into runner
+      - name: Copy application.properties and gcp cloud storage key into runner
         run: |
           mkdir -p ./src/main/resources
           touch ./src/main/resources/application.properties
           echo "${{secrets.APPLICATION_YML}}" > ./src/main/resources/application.properties
+          touch ./src/main/resources/googlecloudstoragekey.json
+          echo "${{secrets.GCS_JSON_KEY}}" > ./src/main/resources/googlecloudstoragekey.json
 
       - name: Build with Gradle
         run: |
