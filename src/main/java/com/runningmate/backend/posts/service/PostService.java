@@ -31,7 +31,7 @@ public class PostService {
 
     public PostResponseDto createPost(CreatePostRequest postRequest, String username, String imageUrl) {
         Member member = memberService.getMemberByUsername(username);
-        Post post = postRequest.toEntity(Member.builder().id(member.getId()).build(), imageUrl);
+        Post post = postRequest.toEntity(member, imageUrl);
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
