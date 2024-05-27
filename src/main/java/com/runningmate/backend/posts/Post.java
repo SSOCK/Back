@@ -31,6 +31,9 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(length = 255)
+    private String imageUrl; // Add this field
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

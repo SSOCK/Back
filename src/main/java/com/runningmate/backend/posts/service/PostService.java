@@ -3,7 +3,7 @@ package com.runningmate.backend.posts.service;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
-import com.runningmate.backend.member.dto.PostResponseDto;
+import com.runningmate.backend.posts.dto.PostResponseDto;
 import com.runningmate.backend.member.repository.FollowRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Post;
@@ -29,9 +29,9 @@ public class PostService {
     private final FollowRepository followRepository;
 
 
-    public PostResponseDto createPost(CreatePostRequest postRequest, String username) {
+    public PostResponseDto createPost(CreatePostRequest postRequest, String username, String imageUrl) {
         Member member = memberService.getMemberByUsername(username);
-        Post post = postRequest.toEntity(Member.builder().id(member.getId()).build());
+        Post post = postRequest.toEntity(Member.builder().id(member.getId()).build(), imageUrl);
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }

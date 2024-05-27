@@ -1,5 +1,6 @@
-package com.runningmate.backend.member.dto;
+package com.runningmate.backend.posts.dto;
 
+import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.posts.Post;
 import lombok.*;
 
@@ -14,6 +15,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private MemberDto member;
+    private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -26,6 +28,7 @@ public class PostResponseDto {
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
+                .imageUrl(post.getImageUrl())
                 .member(memberDto)
                 .build();
     }

@@ -5,10 +5,10 @@ import com.runningmate.backend.posts.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@Builder
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreatePostRequest {
 
@@ -19,11 +19,14 @@ public class CreatePostRequest {
     @Size(max=2000)
     private String content;
 
-    public Post toEntity(Member member) {
+    private MultipartFile image;
+
+    public Post toEntity(Member member, String imageUrl) {
         return Post.builder()
                 .member(member)
                 .title(this.title)
                 .content(this.content)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

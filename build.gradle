@@ -21,6 +21,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation group: 'com.google.cloud', name: 'google-cloud-storage', version: '2.37.0'
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
 	implementation 'org.projectlombok:lombok'
 	implementation 'com.auth0:java-jwt:4.4.0'
