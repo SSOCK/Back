@@ -1,9 +1,6 @@
 package com.runningmate.backend;
 
-import com.runningmate.backend.exception.ErrorMessageResponseDTO;
-import com.runningmate.backend.exception.ExistsConflictException;
-import com.runningmate.backend.exception.FieldExistsException;
-import com.runningmate.backend.exception.ResourceNotFoundException;
+import com.runningmate.backend.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -30,6 +27,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorMessageResponseDTO> handleResourceNotFoundException(ResourceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageResponseDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<ErrorMessageResponseDTO> handleInvalidFileTypeException(InvalidFileTypeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageResponseDTO(e.getMessage()));
     }
 
