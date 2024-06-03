@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/{memberId}/follow")
     public void followUser(@PathVariable(name = "memberId") Long memberId, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
