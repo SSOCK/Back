@@ -24,7 +24,7 @@ public class MemberController {
     }
 
     @ResponseStatus(value = HttpStatus.OK)
-    @PostMapping("/{memberId}/unfollow")
+    @DeleteMapping("/{memberId}/unfollow")
     public void unfollowUser(@PathVariable(name = "memberId") Long memberId, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Member follower = memberService.getMemberByUsername(username);
