@@ -7,6 +7,7 @@ import com.runningmate.backend.jwt.service.JwtService;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public AccessTokenReissueDto reissueAccessToken(@CookieValue(value = "refresh-token", defaultValue = "") String refreshToken) throws InvalidTokenException{
         if (!refreshToken.isEmpty() && jwtService.isTokenValid(refreshToken)) {
             Optional<String> usernameOpt = jwtService.extractUsername(refreshToken);
