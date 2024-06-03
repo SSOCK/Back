@@ -1,5 +1,6 @@
 package com.runningmate.backend.jwt.filter;
 
+import com.runningmate.backend.exception.InvalidTokenException;
 import com.runningmate.backend.jwt.service.JwtService;
 import com.runningmate.backend.member.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
@@ -65,23 +66,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            return;
 //        }
 
-        jwtService.extractAccessToken(request).ifPresent(
-                accessToken -> jwtService.extractUsername(accessToken).ifPresent(
-                        username -> memberRepository.findByUsername(username).ifPresent(
-                                member -> {
-                                    UserDetails user = User.builder()
-                                            .username(member.getUsername())
-                                            .password(member.getPassword())
-                                            .roles(member.getRole().name())
-                                            .build();
-                                    //TODO: Create Custom UserDetails to store member so i do not need to do another findByUsername in controller
-                                    Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesMapper.mapAuthorities(user.getAuthorities()));
-                                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                                }
-                        )
-                )
-        );
-        System.out.println("Went through extracting username from accessToken");
+        boolean tokenValid = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .flatMap(jwtService::extractUsername)
+                .flatMap(username -> memberRepository.findByUsername(username)
+                        .map(member -> {
+                            UserDetails user = User.builder()
+                                    .username(member.getUsername())
+                                    .password(member.getPassword())
+                                    .roles(member.getRole().name())
+                                    .build();
+                            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesMapper.mapAuthorities(user.getAuthorities()));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            return true;
+                        }))
+                .orElse(false);
+
+        // If the token is invalid, return a 401 response
+        if (!tokenValid) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"Invalid token\"}");
+            response.setContentType("application/json");
+            return;
+        }
+
         filterChain.doFilter(request, response);
     }
 
