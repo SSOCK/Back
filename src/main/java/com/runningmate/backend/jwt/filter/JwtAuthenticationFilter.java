@@ -24,7 +24,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final List<String> SKIP_ENDPOINTS = Arrays.asList("/login", "/signup");
+    private static final List<String> SKIP_ENDPOINTS = Arrays.asList("/login", "/signup", "/auth");
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
@@ -43,25 +43,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String refreshToken = jwtService.extractRefreshToken(request).filter(token -> jwtService.isTokenValid(token)).orElse(null);
-
-        if (refreshToken != null) {
-            jwtService.extractUsername(refreshToken).ifPresent(
-                    username -> memberRepository.findByUsername(username).ifPresent(
-                            member -> {
-                                if (member.getRefreshtoken() == refreshToken) {
-                                    String newAccessToken = jwtService.createAccessToken(username);
-                                    try {
-                                        jwtService.sendAccessToken(response, newAccessToken);
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            }
-                    )
-            );
-            return;
-        }
+        //Separated refresh token check to a new api endpoint /auth/refresh.
+        //Refresh token is stored in Cookie and sent only to /auth/refresh endpoint.
+//        String refreshToken = jwtService.extractRefreshToken(request).filter(token -> jwtService.isTokenValid(token)).orElse(null);
+//
+//        if (refreshToken != null) {
+//            jwtService.extractUsername(refreshToken).ifPresent(
+//                    username -> memberRepository.findByUsername(username).ifPresent(
+//                            member -> {
+//                                if (member.getRefreshtoken() == refreshToken) {
+//                                    String newAccessToken = jwtService.createAccessToken(username);
+//                                    try {
+//                                        jwtService.sendAccessToken(response, newAccessToken);
+//                                    } catch (IOException e) {
+//                                        throw new RuntimeException(e);
+//                                    }
+//                                }
+//                            }
+//                    )
+//            );
+//            return;
+//        }
 
         jwtService.extractAccessToken(request).ifPresent(
                 accessToken -> jwtService.extractUsername(accessToken).ifPresent(
