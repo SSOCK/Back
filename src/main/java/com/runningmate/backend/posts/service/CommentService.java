@@ -1,5 +1,7 @@
 package com.runningmate.backend.posts.service;
 
+import com.runningmate.backend.exception.NoPermissionException;
+import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.posts.Comment;
@@ -26,5 +28,27 @@ public class CommentService {
         Comment comment = dto.toEntity(member, post);
         commentRepository.save(comment);
         return new CommentResponseDto(comment);
+    }
+
+    public void deleteComment(Long commentId, String username) {
+        Comment comment = getCommentById(commentId);
+
+        if (!hasPermission(comment, username)) {
+            throw new NoPermissionException();
+        }
+
+        commentRepository.delete(comment);
+    }
+
+    public Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with comment id " + commentId));
+    }
+
+    private boolean hasPermission(Comment comment, String username) {
+        if (comment.getMember().getUsername().equals(username)) {
+            return true;
+        }
+        return false;
     }
 }
