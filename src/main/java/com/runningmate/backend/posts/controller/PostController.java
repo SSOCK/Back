@@ -51,7 +51,7 @@ public class PostController {
         return postService.getRecentPostsOfFollowedMembers(user, page, size);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postId}/like")
     public void toggleLike(@PathVariable(name = "postId") Long postId, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
