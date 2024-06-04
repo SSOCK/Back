@@ -57,8 +57,14 @@ public class PostService {
         return posts.stream().map((Post post) -> PostResponseDto.fromEntity(post, postLikeService.getLikeCountByPostId(post.getId()))).collect(Collectors.toList());
     }
 
-    public Post getPostById(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + id));
+    public PostResponseDto getOnePost(Long postId) {
+        Post post = getPostById(postId);
+        long likes = postLikeService.getLikeCountByPostId(postId);
+        return PostResponseDto.fromEntity(post, likes);
+    }
+
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
     }
 
     public boolean toggleLike(Long postId, String username) {
