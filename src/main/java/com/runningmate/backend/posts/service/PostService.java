@@ -33,7 +33,7 @@ public class PostService {
         Member member = memberService.getMemberByUsername(username);
         Post post = postRequest.toEntity(member, imageUrl);
         Post savedPost = postRepository.save(post);
-        return PostResponseDto.fromEntity(savedPost);
+        return PostResponseDto.fromEntity(savedPost, 0);
     }
 
     public Post updatePost(Long id, Post updatePostDTO) {//TODO: change to PostDTO
@@ -54,7 +54,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(0, 30);
         List<Post> posts = postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
 
-        return posts.stream().map(PostResponseDto::fromEntity).collect(Collectors.toList());
+        return posts.stream().map((Post post) -> PostResponseDto.fromEntity(post, postLikeService.getLikeCountByPostId(post.getId()))).collect(Collectors.toList());
     }
 
     public Optional<Post> getPostById(Long id) {

@@ -16,16 +16,18 @@ public class PostResponseDto {
     private String content;
     private MemberDto member;
     private String imageUrl;
+    private Integer likes;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static PostResponseDto fromEntity(Post post) {
+    public static PostResponseDto fromEntity(Post post, Integer likes) {
         MemberDto memberDto = MemberDto.fromEntity(post.getMember());
 
         return PostResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .likes(likes)
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
                 .imageUrl(post.getImageUrl())
