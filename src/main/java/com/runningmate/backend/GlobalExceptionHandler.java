@@ -40,6 +40,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageResponseDTO(e.getMessage()));
     }
 
+    @ExceptionHandler(NoPermissionException.class)
+    public ResponseEntity<ErrorMessageResponseDTO> handleNoPermissionException(NoPermissionException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageResponseDTO(e.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();

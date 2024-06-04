@@ -57,6 +57,14 @@ public class PostController {
         return postService.getOnePost(postId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable(name = "postId") Long postId,
+                           @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        postService.deletePost(postId, username);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postId}/like")
     public void toggleLike(@PathVariable(name = "postId") Long postId, Authentication authentication) {
