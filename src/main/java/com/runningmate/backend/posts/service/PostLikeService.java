@@ -23,7 +23,7 @@ public class PostLikeService {
         return postLikeRepository.existsByPostIdAndMemberId(postId, memberId);
     }
 
-    public long getLikeCountByPostId(Long postId) {
+    public int getLikeCountByPostId(Long postId) {
         return postLikeRepository.countByPostId(postId);
     }
 
