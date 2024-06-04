@@ -53,7 +53,7 @@ public class PostController {
         postService.toggleLike(postId, userDetails.getUsername());
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postId}/comments")
     public CommentResponseDto commentOnPost(@PathVariable(name = "postId") Long postId, @Valid @RequestBody CommentRequestDto commentRequestDto, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
