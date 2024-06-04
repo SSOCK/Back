@@ -16,11 +16,11 @@ public class PostResponseDto {
     private String content;
     private MemberDto member;
     private String imageUrl;
-    private Integer likes;
+    private long likes;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static PostResponseDto fromEntity(Post post, Integer likes) {
+    public static PostResponseDto fromEntity(Post post, long likes) {
         MemberDto memberDto = MemberDto.fromEntity(post.getMember());
 
         return PostResponseDto.builder()
