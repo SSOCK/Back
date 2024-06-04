@@ -7,38 +7,30 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Table(name = "post")
+@Table(name = "comment")
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "comment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(nullable = false, length = 100)
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    @Column(length = 255)
-    private String imageUrl; // Add this field
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @OrderBy("createdAt asc") //Order by time, 시간 순으로 정렬
-    private List<Comment> comments = new ArrayList<>();
 
     @CreatedDate
     @Column(updatable = false)
@@ -56,10 +48,5 @@ public class Post {
     @PreUpdate
     protected void onUpdate() {
         this.modifiedAt = LocalDateTime.now();
-    }
-
-    public void updatePost(String title, String content) {
-        this.title = title;
-        this.content = content;
     }
 }
