@@ -10,6 +10,8 @@ import com.runningmate.backend.posts.service.CommentService;
 import com.runningmate.backend.posts.service.GcsFileStorageService;
 import com.runningmate.backend.posts.service.PostService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -32,7 +34,8 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public PostResponseDto createNewPost(@Valid @ModelAttribute CreatePostRequest createPostRequest, @AuthenticationPrincipal UserDetails userDetails) throws RuntimeException, IOException {
+    public PostResponseDto createNewPost(@Valid @ModelAttribute CreatePostRequest createPostRequest,
+                                         @AuthenticationPrincipal UserDetails userDetails) throws RuntimeException, IOException {
         String username = userDetails.getUsername();
         String imageUrl = gcsFileStorageService.storeFile(createPostRequest.getImage());
         return postService.createPost(createPostRequest, username, imageUrl);
@@ -40,10 +43,12 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("")
-    public List<PostResponseDto> getRecentPosts(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<PostResponseDto> getRecentPosts(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(30) int size,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Member user = memberService.getMemberByUsername(username);
-        return postService.getRecentPostsOfFollowedMembers(user);
+        return postService.getRecentPostsOfFollowedMembers(user, page, size);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -55,7 +60,8 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postId}/comments")
-    public CommentResponseDto commentOnPost(@PathVariable(name = "postId") Long postId, @Valid @RequestBody CommentRequestDto commentRequestDto, Authentication authentication) {
+    public CommentResponseDto commentOnPost(@PathVariable(name = "postId") Long postId,
+                                            @Valid @RequestBody CommentRequestDto commentRequestDto, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return commentService.saveComment(userDetails.getUsername(), commentRequestDto, postId);
     }

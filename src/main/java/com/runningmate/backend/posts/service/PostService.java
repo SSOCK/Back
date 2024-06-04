@@ -42,13 +42,16 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public List<PostResponseDto> getRecentPostsOfFollowedMembers(Member user) {
+    public List<PostResponseDto> getRecentPostsOfFollowedMembers(Member user, int page, int size) {
         List<Follow> follows = followRepository.findByFollower(user);
         List<Member> followedMembers = follows.stream()
                 .map(Follow::getFollowing)
                 .collect(Collectors.toList());
 
-        Pageable pageable = PageRequest.of(0, 30);
+        if (size > 30) {
+            size = 30;
+        }
+        Pageable pageable = PageRequest.of(page, size);
         List<Post> posts = postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
 
         return posts.stream().map((Post post) -> PostResponseDto.fromEntity(post, postLikeService.getLikeCountByPostId(post.getId()))).collect(Collectors.toList());
