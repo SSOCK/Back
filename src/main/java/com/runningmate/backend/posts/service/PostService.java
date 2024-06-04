@@ -1,5 +1,6 @@
 package com.runningmate.backend.posts.service;
 
+import com.runningmate.backend.exception.NoPermissionException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
@@ -63,6 +64,15 @@ public class PostService {
         return PostResponseDto.fromEntity(post, likes);
     }
 
+    public boolean deletePost(Long postId, String username) {
+        Post post = getPostById(postId);
+        if(!hasPermission(post, username)) {
+            throw new NoPermissionException();
+        }
+        postRepository.delete(post);
+        return true;
+    }
+
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
     }
@@ -83,5 +93,12 @@ public class PostService {
 
     public List<Post> getPostsByCreatedAt(LocalDate date) {
         return postRepository.findAllByCreatedAt(date);
+    }
+
+    private boolean hasPermission(Post post, String username) {
+        if(!post.getMember().getUsername().equals(username)) {
+            return false;
+        }
+        return true;
     }
 }
