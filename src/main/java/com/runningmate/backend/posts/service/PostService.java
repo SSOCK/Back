@@ -37,12 +37,9 @@ public class PostService {
     }
 
     public Post updatePost(Long id, Post updatePostDTO) {//TODO: change to PostDTO
-        return this.getPostById(id)
-                .map(post -> {
-                    post.updatePost(updatePostDTO.getTitle(), updatePostDTO.getContent());
-                    return postRepository.save(post);
-                })
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + id));
+        Post post = this.getPostById(id);
+        post.updatePost(updatePostDTO.getTitle(), updatePostDTO.getContent());
+        return postRepository.save(post);
     }
 
     public List<PostResponseDto> getRecentPostsOfFollowedMembers(Member user) {
@@ -57,8 +54,8 @@ public class PostService {
         return posts.stream().map((Post post) -> PostResponseDto.fromEntity(post, postLikeService.getLikeCountByPostId(post.getId()))).collect(Collectors.toList());
     }
 
-    public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
+    public Post getPostById(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + id));
     }
 
     public boolean toggleLike(Long postId, String username) {
