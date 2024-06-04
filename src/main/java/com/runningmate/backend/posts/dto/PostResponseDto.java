@@ -5,6 +5,9 @@ import com.runningmate.backend.posts.Post;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -17,6 +20,7 @@ public class PostResponseDto {
     private MemberDto member;
     private String imageUrl;
     private long likes;
+    private List<CommentResponseDto> comments;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -28,6 +32,7 @@ public class PostResponseDto {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likes(likes)
+                .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
                 .imageUrl(post.getImageUrl())
