@@ -38,6 +38,7 @@ public class Post {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("createdAt asc") //Order by time, 시간 순으로 정렬
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
     @CreatedDate

@@ -50,9 +50,11 @@ public class Member {
     private LocalDateTime modifiedAt;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Follow> followings = new ArrayList<>();
 
     @PrePersist
