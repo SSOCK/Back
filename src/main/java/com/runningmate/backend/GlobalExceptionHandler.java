@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoPermissionException.class)
     public ResponseEntity<ErrorMessageResponseDTO> handleNoPermissionException(NoPermissionException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageResponseDTO(e.getMessage()));
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorMessageResponseDTO> handleBadRequestException(BadRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

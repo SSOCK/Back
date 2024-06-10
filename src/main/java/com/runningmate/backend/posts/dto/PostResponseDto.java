@@ -18,7 +18,7 @@ public class PostResponseDto {
     private String title;
     private String content;
     private MemberDto member;
-    private String imageUrl;
+    private List<String> imageUrls;
     private long likes;
     private List<CommentResponseDto> comments;
     private LocalDateTime createdAt;
@@ -35,7 +35,7 @@ public class PostResponseDto {
                 .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
-                .imageUrl(post.getImageUrl())
+                .imageUrls(post.getImageUrls())
                 .member(memberDto)
                 .build();
     }
