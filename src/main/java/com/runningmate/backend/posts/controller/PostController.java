@@ -1,5 +1,6 @@
 package com.runningmate.backend.posts.controller;
 
+import com.runningmate.backend.exception.BadRequestException;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.posts.dto.CommentRequestDto;
 import com.runningmate.backend.posts.dto.CommentResponseDto;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,11 +36,18 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public PostResponseDto createNewPost(@Valid @ModelAttribute CreatePostRequest createPostRequest,
+    public PostResponseDto createNewPost(@Valid @ModelAttribute CreatePostRequest request,
                                          @AuthenticationPrincipal UserDetails userDetails) throws RuntimeException, IOException {
         String username = userDetails.getUsername();
-        String imageUrl = gcsFileStorageService.storeFile(createPostRequest.getImage());
-        return postService.createPost(createPostRequest, username, imageUrl);
+        List<String> imageUrls = new ArrayList<>();
+        if (request.getImage().size() > 10) {
+            throw new BadRequestException("Number of files must 10 or lower");
+        }
+        for (MultipartFile file: request.getImage()) {
+            String imageUrl = gcsFileStorageService.storeFile(file);
+            imageUrls.add(imageUrl);
+        }
+        return postService.createPost(request, username, imageUrls);
     }
 
     @ResponseStatus(HttpStatus.OK)

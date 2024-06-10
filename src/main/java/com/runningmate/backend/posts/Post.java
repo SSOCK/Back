@@ -33,8 +33,11 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(length = 255)
-    private String imageUrl; // Add this field
+    @ElementCollection
+    @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "image_url")
+    @Builder.Default
+    private List<String> imageUrls = new ArrayList<>(); // Add this field
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("createdAt asc") //Order by time, 시간 순으로 정렬
@@ -57,6 +60,14 @@ public class Post {
     @PreUpdate
     protected void onUpdate() {
         this.modifiedAt = LocalDateTime.now();
+    }
+
+    public void addImageUrl(String imageUrl) {
+        imageUrls.add(imageUrl);
+    }
+
+    public void removeImageUrl(String imageUrl) {
+        imageUrls.remove(imageUrl);
     }
 
     public void updatePost(String title, String content) {

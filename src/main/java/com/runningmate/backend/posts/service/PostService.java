@@ -30,9 +30,9 @@ public class PostService {
     private final FollowRepository followRepository;
 
 
-    public PostResponseDto createPost(CreatePostRequest postRequest, String username, String imageUrl) {
+    public PostResponseDto createPost(CreatePostRequest postRequest, String username, List<String> imageUrls) {
         Member member = memberService.getMemberByUsername(username);
-        Post post = postRequest.toEntity(member, imageUrl);
+        Post post = postRequest.toEntity(member, imageUrls);
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost, 0);
     }
