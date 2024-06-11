@@ -64,7 +64,7 @@ jobs:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USERNAME }}
           key: ${{ secrets.GCP_PRIVATEKEY }}
-          source: "./docker-compose.yml"
+          source: "./docker-compose.yml,./init-postgis.sh"
           target: "/home/${{ secrets.GCP_USERNAME }}"
           overwrite: true
           debug: true
