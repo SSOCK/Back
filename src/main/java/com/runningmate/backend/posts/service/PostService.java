@@ -43,11 +43,12 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public List<PostResponseDto> getRecentPostsOfFollowedMembers(Member user, int page, int size) {
+    public List<PostResponseDto> getRecentPostsOfFollowingMembers(Member user, int page, int size) {
         List<Follow> follows = followRepository.findByFollower(user);
         List<Member> followedMembers = follows.stream()
                 .map(Follow::getFollowing)
                 .collect(Collectors.toList());
+        followedMembers.add(user);
 
         if (size > 30) {
             size = 30;

@@ -57,7 +57,7 @@ public class PostController {
                                                 @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Member user = memberService.getMemberByUsername(username);
-        return postService.getRecentPostsOfFollowedMembers(user, page, size);
+        return postService.getRecentPostsOfFollowingMembers(user, page, size);
     }
 
     @ResponseStatus(HttpStatus.OK)
