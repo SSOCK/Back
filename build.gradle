@@ -25,6 +25,7 @@ dependencies {
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
 	implementation 'org.projectlombok:lombok'
 	implementation 'com.auth0:java-jwt:4.4.0'
+	implementation 'org.hibernate:hibernate-spatial:6.4.8.Final'
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
