@@ -3,6 +3,7 @@ package com.runningmate.backend.route.controller;
 import com.runningmate.backend.route.dto.RouteRequestDto;
 import com.runningmate.backend.route.dto.RouteResponseDto;
 import com.runningmate.backend.route.service.RouteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,7 @@ public class RouteController {
     private final RouteService routeService;
 
     @PostMapping
-    public RouteResponseDto createRoute(@RequestBody RouteRequestDto routeRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    public RouteResponseDto createRoute(@Valid @RequestBody RouteRequestDto routeRequest, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         return routeService.saveRoute(routeRequest, username);
     }
