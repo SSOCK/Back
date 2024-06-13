@@ -1,5 +1,6 @@
 package com.runningmate.backend.posts;
 
+import com.runningmate.backend.entity.BaseTimeEntity;
 import com.runningmate.backend.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,24 +44,6 @@ public class Post {
     @OrderBy("createdAt asc") //Order by time, 시간 순으로 정렬
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedAt = LocalDateTime.now();
-    }
 
     public void addImageUrl(String imageUrl) {
         imageUrls.add(imageUrl);
