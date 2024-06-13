@@ -1,5 +1,6 @@
 package com.runningmate.backend.member;
 
+import com.runningmate.backend.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseTimeEntity {
     //https://cobbybb.tistory.com/14
 
     @Id
@@ -41,14 +42,6 @@ public class Member {
     @Column(length = 1000)
     private String refreshtoken;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
-
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Follow> followers = new ArrayList<>();
@@ -56,16 +49,6 @@ public class Member {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Follow> followings = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedAt = LocalDateTime.now();
-    }
 
     public void updateRefreshToken(String token) {
         this.refreshtoken = token;

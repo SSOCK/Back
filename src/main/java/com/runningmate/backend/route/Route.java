@@ -1,5 +1,6 @@
 package com.runningmate.backend.route;
 
+import com.runningmate.backend.entity.BaseTimeEntity;
 import com.runningmate.backend.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Route {
+public class Route extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

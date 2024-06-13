@@ -1,5 +1,6 @@
 package com.runningmate.backend.posts;
 
+import com.runningmate.backend.entity.BaseTimeEntity;
 import com.runningmate.backend.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,22 +32,4 @@ public class Comment {
 
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedAt = LocalDateTime.now();
-    }
 }
