@@ -52,12 +52,11 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<PostResponseDto> getRecentPosts(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(30) int size,
+    public List<PostResponseDto> getRecentPosts(@RequestParam(name = "after", defaultValue = "-1") long lastPostId,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         Member user = memberService.getMemberByUsername(username);
-        return postService.getRecentPostsOfFollowingMembers(user, page, size);
+        return postService.getRecentPostsOfFollowingMembers(user, lastPostId);
     }
 
     @ResponseStatus(HttpStatus.OK)
