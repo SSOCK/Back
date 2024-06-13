@@ -35,7 +35,7 @@ public class PostController {
     private final GcsFileStorageService gcsFileStorageService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("")
+    @PostMapping
     public PostResponseDto createNewPost(@Valid @ModelAttribute CreatePostRequest request,
                                          @AuthenticationPrincipal UserDetails userDetails) throws RuntimeException, IOException {
         String username = userDetails.getUsername();
@@ -51,7 +51,7 @@ public class PostController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("")
+    @GetMapping
     public List<PostResponseDto> getRecentPosts(@RequestParam(name = "page", defaultValue = "0") int page,
                                                 @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(30) int size,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
