@@ -61,8 +61,15 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{postId}")
-    public PostResponseDto getPost(@PathVariable(name = "postId") Long postId) {
-        return postService.getOnePost(postId);
+    public PostResponseDto getPost(@PathVariable(name = "postId") Long postId,
+                                   @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return postService.getOnePost(postId);
+        } else {
+            String username = userDetails.getUsername();
+            Member user = memberService.getMemberByUsername(username);
+            return postService.getOnePost(postId, user);
+        }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

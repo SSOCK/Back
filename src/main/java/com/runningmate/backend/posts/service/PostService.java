@@ -34,7 +34,7 @@ public class PostService {
         Member member = memberService.getMemberByUsername(username);
         Post post = postRequest.toEntity(member, imageUrls);
         Post savedPost = postRepository.save(post);
-        return PostResponseDto.fromEntity(savedPost, 0);
+        return PostResponseDto.fromEntity(savedPost, 0, false);
     }
 
     public Post updatePost(Long id, Post updatePostDTO) {//TODO: change to PostDTO
@@ -59,13 +59,23 @@ public class PostService {
             posts = postRepository.findByMemberInOrderByCreatedAtDesc(followedMembers, pageable);
         }
 
-        return posts.stream().map((Post post) -> PostResponseDto.fromEntity(post, postLikeService.getLikeCountByPostId(post.getId()))).collect(Collectors.toList());
+        return posts.stream().map((Post post) -> PostResponseDto
+                .fromEntity(post
+                        , postLikeService.getLikeCountByPostId(post.getId())
+                        , postLikeService.hasMemberLikedPost(post.getId(), user.getId())))
+                .collect(Collectors.toList());
     }
 
     public PostResponseDto getOnePost(Long postId) {
         Post post = getPostById(postId);
         long likes = postLikeService.getLikeCountByPostId(postId);
-        return PostResponseDto.fromEntity(post, likes);
+        return PostResponseDto.fromEntity(post, likes, false);
+    }
+
+    public PostResponseDto getOnePost(Long postId, Member user) {
+        Post post = getPostById(postId);
+        long likes = postLikeService.getLikeCountByPostId(postId);
+        return PostResponseDto.fromEntity(post, likes, postLikeService.hasMemberLikedPost(postId, user.getId()));
     }
 
     public boolean deletePost(Long postId, String username) {
