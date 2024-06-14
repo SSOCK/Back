@@ -20,11 +20,12 @@ public class PostResponseDto {
     private MemberDto member;
     private List<String> imageUrls;
     private long likes;
+    private boolean liked;
     private List<CommentResponseDto> comments;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static PostResponseDto fromEntity(Post post, long likes) {
+    public static PostResponseDto fromEntity(Post post, long likes, boolean liked) {
         MemberDto memberDto = MemberDto.fromEntity(post.getMember());
 
         return PostResponseDto.builder()
@@ -32,6 +33,7 @@ public class PostResponseDto {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likes(likes)
+                .liked(liked)
                 .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())

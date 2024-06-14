@@ -1,6 +1,5 @@
 package com.runningmate.backend.jwt.filter;
 
-import com.runningmate.backend.exception.InvalidTokenException;
 import com.runningmate.backend.jwt.service.JwtService;
 import com.runningmate.backend.member.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
@@ -12,16 +11,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -65,25 +64,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            );
 //            return;
 //        }
+        Optional<String> token = jwtService.extractAccessToken(request);
+        AtomicBoolean tokenValid = new AtomicBoolean(false);
 
-        boolean tokenValid = jwtService.extractAccessToken(request)
-                .filter(jwtService::isTokenValid)
-                .flatMap(jwtService::extractUsername)
-                .flatMap(username -> memberRepository.findByUsername(username)
-                        .map(member -> {
-                            UserDetails user = User.builder()
-                                    .username(member.getUsername())
-                                    .password(member.getPassword())
-                                    .roles(member.getRole().name())
-                                    .build();
-                            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesMapper.mapAuthorities(user.getAuthorities()));
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            return true;
-                        }))
-                .orElse(false);
+        if (token.isPresent()) {
+            String accessToken = token.get();
+            if (jwtService.isTokenValid(accessToken)) {
+                jwtService.extractUsername(accessToken).ifPresent(username -> {
+                    memberRepository.findByUsername(username).ifPresent(member -> {
+                        tokenValid.set(true);
+                        UserDetails user = User.builder()
+                                .username(member.getUsername())
+                                .password(member.getPassword())
+                                .roles(member.getRole().name())
+                                .build();
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesMapper.mapAuthorities(user.getAuthorities()));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    });
+                });
+            }
+        }
+        else {
+            //Might Change this later to receive mock data from the frontend
+            //Because not getting this and setting tokenValid to true will respone with 403 instead of 403 for
+            //not allowed endpoint
+            tokenValid.set(true);
+        }
 
         // If the token is invalid, return a 401 response
-        if (!tokenValid) {
+        if (!tokenValid.get()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\":\"Invalid token\"}");
             response.setContentType("application/json");
