@@ -28,9 +28,10 @@ public class RouteRequestDto {
     @NotBlank(message = "Title must be given.")
     private String title;
 
-    @NotBlank(message = "Time must be given")
-    @Pattern(regexp = "^(2[0-4]|[01]?[0-9]):[0-5][0-9]$|^(2[0-4]|[01]?[0-9])$", message = "Invalid time format. HH:MM, H:MM, M, MM")
-    private String time;
+    //Remove time for now. Might add again later
+//    @NotBlank(message = "Time must be given")
+//    @Pattern(regexp = "^(2[0-4]|[01]?[0-9]):[0-5][0-9]$|^(2[0-4]|[01]?[0-9])$", message = "Invalid time format. HH:MM, H:MM, M, MM")
+//    private String time;
 
     @NotNull(message = "Choose difficulty between 0(EASY), 1(MEDIUM), 2(HARD)")
     @Min(value = 0, message = "Difficulty must be between 0 and 2")
@@ -42,7 +43,7 @@ public class RouteRequestDto {
                 .member(member)
                 .path(path)
                 .difficulty(difficulty)
-                .time(time)
+//                .time(time)
                 .title(title)
                 .distance(distance)
                 .build();
