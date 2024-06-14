@@ -22,7 +22,7 @@ public class RouteRequestDto {
     private List<CoordinateDto> route;
 
     @NotNull(message = "Distance Field has to be set.")
-    @Digits(integer = 3, fraction = 2, message = "Up to 3 digits and 2 decimal places. Example: 128.11")
+    @Max(value = 300, message = "Distance can't be larger than 300km")
     private Double distance;
 
     @NotBlank(message = "Title must be given.")
