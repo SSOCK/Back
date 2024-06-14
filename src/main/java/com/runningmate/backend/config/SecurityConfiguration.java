@@ -32,6 +32,7 @@ public class SecurityConfiguration {
     private final ObjectMapper objectMapper;
     private final LoginService loginService;
     private final MemberRepository memberRepository;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     private static final String[] WHITELIST_ALL = {
             "/login",
@@ -58,7 +59,10 @@ public class SecurityConfiguration {
                         authorizeRequest
                                 .requestMatchers(WHITELIST_ALL).permitAll()
                                 .requestMatchers(HttpMethod.GET, WHITELIST_GET).permitAll()
-                                .anyRequest().authenticated()));
+                                .anyRequest().authenticated()))
+                .exceptionHandling(exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint));;
+
         http.addFilterAfter(jsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), JsonUsernamePasswordAuthenticationFilter.class);
 
