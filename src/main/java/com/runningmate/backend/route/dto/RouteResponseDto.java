@@ -18,7 +18,7 @@ public class RouteResponseDto {
     private String title;
     private Double distance;
     private Integer difficulty;
-    private String time;
+//    private String time;
     private MemberDto member;
     @JsonProperty("course")
     private List<CoordinateDto> route;
@@ -28,7 +28,7 @@ public class RouteResponseDto {
         this.member = MemberDto.fromEntity(route.getMember());
         this.distance = route.getDistance();
         this.difficulty = route.getDifficulty();
-        this.time = route.getTime();
+//        this.time = route.getTime();
         this.title = route.getTitle();
         this.route = routes;
     }

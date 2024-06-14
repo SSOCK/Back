@@ -32,9 +32,6 @@ public class Route extends BaseTimeEntity {
     private Integer difficulty;
 
     @Column(nullable = false)
-    private String time;
-
-    @Column(nullable = false)
     private Double distance;
 
     @Column(columnDefinition = "geography(LineString, 4326)")
