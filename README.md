@@ -1,3 +1,21 @@
+## Backend Team
+
+<table align="left">
+  <th >Backend</th>
+  <th >Backend</th>
+  <tr>
+    <td><img src="https://avatars.githubusercontent.com/u/33882299?v=5" width="150px"/></td>
+    <td><img src="https://avatars.githubusercontent.com/u/83938394?v=5" width="150px"/></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/peageon">최진수</a>
+    </td>
+    <td align="center"><a href="https://github.com/yunuo46">송현우</a>
+  </tr>
+</table>
+
+<br clear="all"/>
+
 ## [FrontEnd Repository](https://github.com/SSOCK/Front)
 
 ## [API Specification](https://delicious-halloumi-7ae.notion.site/c846f0d6995e43f3bb1ee40f9e35ef2d?v=e1bd18681e694ac9aa3b86c65a45027a&pvs=4)
