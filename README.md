@@ -1,3 +1,7 @@
+## [FrontEnd Repository](https://github.com/SSOCK/Front)
+
+## [API Specification](https://delicious-halloumi-7ae.notion.site/c846f0d6995e43f3bb1ee40f9e35ef2d?v=e1bd18681e694ac9aa3b86c65a45027a&pvs=4)
+
 ## Tech Stack
 
 <table>
