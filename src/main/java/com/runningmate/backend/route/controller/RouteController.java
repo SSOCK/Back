@@ -24,4 +24,10 @@ public class RouteController {
         return routeService.saveRoute(routeRequest, username);
     }
 
+    @GetMapping("/{routeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RouteResponseDto getRouteById(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+        RouteResponseDto routeResponseDto = routeService.getRouteById(routeId);
+        return routeResponseDto;
+    }
 }
