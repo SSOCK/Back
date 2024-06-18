@@ -1,5 +1,6 @@
 package com.runningmate.backend.route.service;
 
+import com.runningmate.backend.exception.BadRequestException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.member.service.MemberService;
@@ -9,7 +10,6 @@ import com.runningmate.backend.route.dto.RouteRequestDto;
 import com.runningmate.backend.route.dto.RouteResponseDto;
 import com.runningmate.backend.route.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
@@ -28,7 +28,7 @@ public class RouteService {
     private final MemberService memberService;
 
     @Transactional
-    public RouteResponseDto saveRoute(RouteRequestDto request, String username) throws BadRequestException {
+    public RouteResponseDto saveRoute(RouteRequestDto request, String username) {
         List<CoordinateDto> coordinateDtos = request.getRoute();
         validateCoordinates(coordinateDtos);
         LineString lineString = coordinateDtoListToLineString(coordinateDtos);
@@ -42,6 +42,17 @@ public class RouteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + routeId + " does not exist"));
         List<CoordinateDto> translatedCoordinates = lineStringToCoordinateDtoList(route.getPath());
         return new RouteResponseDto(route, translatedCoordinates);
+    }
+
+    public List<RouteResponseDto> getRoutesWithinRadius(double latitude, double longitude, int radius) {
+        validateCoordinate(new CoordinateDto(latitude, longitude));
+        List<Route> routes = routeRepository.findRoutesWithinRadius(latitude, longitude, radius);
+        List<RouteResponseDto> routeDtos = new ArrayList<>();
+        for (Route route: routes) {
+            List<CoordinateDto> translatedCoordinates = lineStringToCoordinateDtoList(route.getPath());
+            routeDtos.add(new RouteResponseDto(route, translatedCoordinates));
+        }
+        return routeDtos;
     }
 
     private LineString coordinateDtoListToLineString(List<CoordinateDto> coordinateDtos) {
@@ -64,14 +75,18 @@ public class RouteService {
         return coordinateDtos;
     }
 
-    private void validateCoordinates(List<CoordinateDto> coordinateDTOs) throws BadRequestException {
+    private void validateCoordinate(CoordinateDto coordinateDto) {
+        if (coordinateDto.getLatitude() < -90 || coordinateDto.getLatitude() > 90) {
+            throw new BadRequestException("Invalid latitude: " + coordinateDto.getLatitude() + "\n Latitude must be within -90 and 90");
+        }
+        if (coordinateDto.getLongitude() < -180 || coordinateDto.getLongitude() > 180) {
+            throw new BadRequestException("Invalid longitude: " + coordinateDto.getLongitude() + "\n Longitude must be within -180 and 180");
+        }
+    }
+
+    private void validateCoordinates(List<CoordinateDto> coordinateDTOs) {
         for (CoordinateDto dto : coordinateDTOs) {
-            if (dto.getLatitude() < -90 || dto.getLatitude() > 90) {
-                throw new BadRequestException("Invalid latitude: " + dto.getLatitude() + "\n Latitude must be within -90 and 90");
-            }
-            if (dto.getLongitude() < -180 || dto.getLongitude() > 180) {
-                throw new BadRequestException("Invalid longitude: " + dto.getLongitude() + "\n Longitude must be within -180 and 180");
-            }
+            validateCoordinate(dto);
         }
     }
 }
