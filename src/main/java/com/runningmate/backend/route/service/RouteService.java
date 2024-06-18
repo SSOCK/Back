@@ -1,5 +1,6 @@
 package com.runningmate.backend.route.service;
 
+import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,13 @@ public class RouteService {
         Route route = request.toEntity(memberService.getMemberByUsername(username), lineString);
         routeRepository.save(route);
         return new RouteResponseDto(route, coordinateDtos);
+    }
+
+    public RouteResponseDto getRouteById(Long routeId) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course with id " + routeId + " does not exist"));
+        List<CoordinateDto> translatedCoordinates = lineStringToCoordinateDtoList(route.getPath());
+        return new RouteResponseDto(route, translatedCoordinates);
     }
 
     private LineString coordinateDtoListToLineString(List<CoordinateDto> coordinateDtos) {
