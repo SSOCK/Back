@@ -3,10 +3,7 @@ package com.runningmate.backend.member;
 import com.runningmate.backend.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +46,10 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Follow> followings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private List<MemberRoute> memberRoutes = new ArrayList<>();
 
     public void updateRefreshToken(String token) {
         this.refreshtoken = token;

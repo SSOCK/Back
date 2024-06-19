@@ -2,10 +2,14 @@ package com.runningmate.backend.route.service;
 
 import com.runningmate.backend.exception.BadRequestException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
+import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.MemberRoute;
 import com.runningmate.backend.member.dto.MemberDto;
+import com.runningmate.backend.member.repository.MemberRouteRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
 import com.runningmate.backend.route.dto.CoordinateDto;
+import com.runningmate.backend.route.dto.RouteListResponseDto;
 import com.runningmate.backend.route.dto.RouteRequestDto;
 import com.runningmate.backend.route.dto.RouteResponseDto;
 import com.runningmate.backend.route.repository.RouteRepository;
@@ -25,10 +29,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RouteService {
     private final RouteRepository routeRepository;
+    private final MemberRouteRepository memberRouteRepository;
     private final MemberService memberService;
 
     @Transactional
-    public RouteResponseDto saveRoute(RouteRequestDto request, String username) {
+    public RouteResponseDto createRoute(RouteRequestDto request, String username) {
         List<CoordinateDto> coordinateDtos = request.getRoute();
         validateCoordinates(coordinateDtos);
         LineString lineString = coordinateDtoListToLineString(coordinateDtos);
@@ -47,6 +52,85 @@ public class RouteService {
     public List<RouteResponseDto> getRoutesWithinRadius(double latitude, double longitude, int radius) {
         validateCoordinate(new CoordinateDto(latitude, longitude));
         List<Route> routes = routeRepository.findRoutesWithinRadius(latitude, longitude, radius);
+        List<RouteResponseDto> routeDtos = changeRoutesToRouteResponseDtos(routes);
+        return routeDtos;
+    }
+
+    public List<Route> getSavedRoutes(Member member) {
+        List<MemberRoute> memberRoutes = memberRouteRepository.findByMemberAndSavedTrue(member);
+        List<Route> routes = new ArrayList<>();
+        for (MemberRoute memberRoute: memberRoutes) {
+            routes.add(memberRoute.getRoute());
+        }
+        return routes;
+    }
+
+    @Transactional
+    public MemberRoute saveRoute(Long routeId, Member member) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
+                );
+        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
+        MemberRoute memberRoute = memberRouteOptional.orElseGet(() -> MemberRoute.builder()
+                .route(route)
+                .member(member)
+                .build());
+
+        memberRoute.saveRoute();
+        return memberRouteRepository.save(memberRoute);
+    }
+
+    @Transactional
+    public void unsaveRoute(Long routeId, Member member) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
+                );
+        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
+        if (memberRouteOptional.isPresent()) {
+            MemberRoute memberRoute = memberRouteOptional.get();
+            memberRoute.unsaveRoute();
+            if (!memberRoute.isLiked() && !memberRoute.isSaved()) {
+                memberRouteRepository.delete(memberRoute);
+            } else {
+                memberRouteRepository.save(memberRoute);
+            }
+        }
+    }
+
+    @Transactional
+    public MemberRoute likeRoute(Long routeId, Member member) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Route with id " + routeId + " does not exist."));
+        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
+        MemberRoute memberRoute = memberRouteOptional.orElseGet(() -> MemberRoute.builder()
+                .route(route)
+                .member(member)
+                .build());
+        memberRoute.likeRoute();
+        return memberRouteRepository.save(memberRoute);
+    }
+
+    @Transactional
+    public void unlikeRoute(Long routeId, Member member) {
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
+                );
+        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
+        if (memberRouteOptional.isPresent()) {
+            MemberRoute memberRoute = memberRouteOptional.get();
+            memberRoute.unlikeRoute();
+            if (!memberRoute.isLiked() && !memberRoute.isSaved()) {
+                memberRouteRepository.delete(memberRoute);
+            } else {
+                memberRouteRepository.save(memberRoute);
+            }
+        }
+    }
+
+    public List<RouteResponseDto> changeRoutesToRouteResponseDtos(List<Route> routes) {
         List<RouteResponseDto> routeDtos = new ArrayList<>();
         for (Route route: routes) {
             List<CoordinateDto> translatedCoordinates = lineStringToCoordinateDtoList(route.getPath());

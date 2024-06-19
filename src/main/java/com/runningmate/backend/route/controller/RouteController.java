@@ -1,5 +1,10 @@
 package com.runningmate.backend.route.controller;
 
+import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.MemberRoute;
+import com.runningmate.backend.member.service.MemberService;
+import com.runningmate.backend.route.Route;
+import com.runningmate.backend.route.dto.MemberRouteResponseDto;
 import com.runningmate.backend.route.dto.RouteListResponseDto;
 import com.runningmate.backend.route.dto.RouteRequestDto;
 import com.runningmate.backend.route.dto.RouteResponseDto;
@@ -21,28 +26,69 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RouteController {
     private final RouteService routeService;
+    private final MemberService memberService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RouteResponseDto createRoute(@Valid @RequestBody RouteRequestDto routeRequest, @AuthenticationPrincipal UserDetails userDetails) throws BadRequestException {
         String username = userDetails.getUsername();
-        return routeService.saveRoute(routeRequest, username);
+        return routeService.createRoute(routeRequest, username);
     }
 
     @GetMapping("/{routeId}")
     @ResponseStatus(HttpStatus.OK)
-    public RouteResponseDto getRouteById(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+    public RouteResponseDto getRouteById(@PathVariable(name = "routeId") Long routeId) {
         RouteResponseDto routeResponseDto = routeService.getRouteById(routeId);
         return routeResponseDto;
     }
 
     @GetMapping("/radius")
     @ResponseStatus(HttpStatus.OK)
-    public RouteListResponseDto getCourseWithinRadius(@RequestParam(name = "latitude") double latitude,
-                                                        @RequestParam(name = "longitude") double longitude,
-                                                        @RequestParam(name = "radius") @Max(5000) @Min(0) int radius) {
+    public RouteListResponseDto getRouteWithinRadius(@RequestParam(name = "latitude") double latitude,
+                                                      @RequestParam(name = "longitude") double longitude,
+                                                      @RequestParam(name = "radius") @Max(5000) @Min(0) int radius) {
         List<RouteResponseDto> routeResponseDtoList = routeService.getRoutesWithinRadius(latitude, longitude, radius);
 
         return new RouteListResponseDto(routeResponseDtoList);
+    }
+
+    @PostMapping("/{routeId}/save")
+    @ResponseStatus(HttpStatus.CREATED)
+    public MemberRouteResponseDto saveRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.getMemberByUsername(userDetails.getUsername());
+        MemberRoute memberRoute = routeService.saveRoute(routeId, member);
+        return new MemberRouteResponseDto(memberRoute);
+    }
+
+    @DeleteMapping("/{routeId}/unsave")
+    @ResponseStatus(HttpStatus.OK) //Return 200 instead of 204 for uniformity
+    public void unsaveRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.getMemberByUsername(userDetails.getUsername());
+        routeService.unsaveRoute(routeId, member);
+    }
+
+    @PostMapping("/{routeId}/like")
+    @ResponseStatus(HttpStatus.CREATED)
+    public MemberRouteResponseDto likeRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.getMemberByUsername(userDetails.getUsername());
+        MemberRoute memberRoute = routeService.likeRoute(routeId, member);
+        return new MemberRouteResponseDto(memberRoute);
+    }
+
+    @DeleteMapping("/{routeId}/unlike")
+    @ResponseStatus(HttpStatus.OK) //Return 200 instead of 204 for uniformity
+    public void unlikeRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
+        Member member = memberService.getMemberByUsername(userDetails.getUsername());
+        routeService.unlikeRoute(routeId, member);
+    }
+
+    @GetMapping("/saved")
+    @ResponseStatus(HttpStatus.OK)
+    public RouteListResponseDto getSavedRoutes(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        Member member = memberService.getMemberByUsername(username);
+        List<Route> routes = routeService.getSavedRoutes(member);
+        List<RouteResponseDto> routeResponseDtos = routeService.changeRoutesToRouteResponseDtos(routes);
+        return new RouteListResponseDto(routeResponseDtos);
     }
 }
