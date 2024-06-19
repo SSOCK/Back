@@ -5,6 +5,7 @@ import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Follow;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.dto.MemberDto;
+import com.runningmate.backend.member.dto.MemberListResponseDto;
 import com.runningmate.backend.member.dto.MemberSignupRequest;
 import com.runningmate.backend.member.Role;
 import com.runningmate.backend.exception.FieldExistsException;
@@ -59,6 +60,27 @@ public class MemberService {
         Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
                 .orElseThrow(() -> new ResourceNotFoundException(follower.getUsername() + " is not following " + following.getUsername()));
         followRepository.delete(follow);
+    }
+
+    public MemberListResponseDto getFollowerList(Long memberId) {
+        Member member = getMemberById(memberId);
+        List<Follow> follows = followRepository.findByFollowing(member);
+        return createMemberListResponseDto("followers", follows);
+    }
+
+    public MemberListResponseDto getFollowingList(Long memberId) {
+        Member member = getMemberById(memberId);
+        List<Follow> follows = followRepository.findByFollowing(member);
+        return createMemberListResponseDto("followings", follows);
+    }
+
+    private MemberListResponseDto createMemberListResponseDto(String type, List<Follow> follows) {
+        List<MemberDto> memberList = new ArrayList<>();
+        for (Follow follow: follows) {
+            memberList.add(MemberDto.fromEntity(follow.getFollower()));
+        }
+        MemberListResponseDto memberListResponseDto = new MemberListResponseDto(type, memberList);
+        return memberListResponseDto;
     }
 
     private Follow createFollow(Member follower, Member following) {

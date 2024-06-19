@@ -1,6 +1,7 @@
 package com.runningmate.backend.member.controller;
 
 import com.runningmate.backend.member.Member;
+import com.runningmate.backend.member.dto.MemberListResponseDto;
 import com.runningmate.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,17 @@ public class MemberController {
         Member follower = memberService.getMemberByUsername(username);
         Member following = memberService.getMemberById(memberId);
         memberService.unfollowUser(follower, following);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/{memberId}/followers")
+    public MemberListResponseDto getFollowerList(@PathVariable(name = "memberId") Long memberId) {
+        return memberService.getFollowerList(memberId);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/{memberId}/followings")
+    public MemberListResponseDto getFollowingList(@PathVariable(name = "memberId") Long memberId) {
+        return memberService.getFollowingList(memberId);
     }
 }
