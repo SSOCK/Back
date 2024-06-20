@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseTimeEntity {
-    //https://cobbybb.tistory.com/14
+    public static final String DEFAULT_PROFILE_PIC = "https://storage.googleapis.com/runningmate-bucket/Screenshot%202024-06-20%20at%203.46.14%E2%80%AFPM.png";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,7 @@ public class Member extends BaseTimeEntity {
 
     @Column
     @Builder.Default
-    private String profilePicture = "https://storage.googleapis.com/runningmate-bucket/Screenshot%202024-06-20%20at%203.46.14%E2%80%AFPM.png";
+    private String profilePicture = DEFAULT_PROFILE_PIC;
 
     public void updateRefreshToken(String token) {
         this.refreshtoken = token;

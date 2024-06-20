@@ -14,6 +14,7 @@ import com.runningmate.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,11 @@ public class MemberService {
         Member member = getMemberById(memberId);
         List<Follow> follows = followRepository.findByFollower(member);
         return createMemberListResponseDto("followings", follows);
+    }
+
+    public Member updateMemberProfilePicture(Member member, String url) {
+        member.updateProfilePicture(url != null ? url : Member.DEFAULT_PROFILE_PIC);
+        return memberRepository.save(member);
     }
 
     private MemberListResponseDto createMemberListResponseDto(String type, List<Follow> follows) {
