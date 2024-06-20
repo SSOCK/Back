@@ -70,7 +70,7 @@ public class MemberService {
 
     public MemberListResponseDto getFollowingList(Long memberId) {
         Member member = getMemberById(memberId);
-        List<Follow> follows = followRepository.findByFollowing(member);
+        List<Follow> follows = followRepository.findByFollower(member);
         return createMemberListResponseDto("followings", follows);
     }
 
