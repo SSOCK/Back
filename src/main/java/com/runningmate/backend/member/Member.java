@@ -51,11 +51,19 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private List<MemberRoute> memberRoutes = new ArrayList<>();
 
+    @Column
+    @Builder.Default
+    private String profilePicture = "https://storage.googleapis.com/runningmate-bucket/Screenshot%202024-06-20%20at%203.46.14%E2%80%AFPM.png";
+
     public void updateRefreshToken(String token) {
         this.refreshtoken = token;
     }
 
     public void removeRefreshToken() {
         this.refreshtoken = null;
+    }
+
+    public void updateProfilePicture(String url) {
+        this.profilePicture = url;
     }
 }
