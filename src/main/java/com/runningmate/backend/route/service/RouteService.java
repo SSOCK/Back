@@ -8,16 +8,16 @@ import com.runningmate.backend.member.dto.MemberDto;
 import com.runningmate.backend.member.repository.MemberRouteRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
-import com.runningmate.backend.route.dto.CoordinateDto;
-import com.runningmate.backend.route.dto.RouteListResponseDto;
-import com.runningmate.backend.route.dto.RouteRequestDto;
-import com.runningmate.backend.route.dto.RouteResponseDto;
+import com.runningmate.backend.route.dto.*;
 import com.runningmate.backend.route.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +49,22 @@ public class RouteService {
         return new RouteResponseDto(route, translatedCoordinates);
     }
 
-    public List<RouteResponseDto> getRoutesWithinRadius(double latitude, double longitude, int radius) {
+    public RouteListPaginationResponseDto getRoutesWithinRadius(double latitude, double longitude, int radius, String orderBy, int page) {
         validateCoordinate(new CoordinateDto(latitude, longitude));
-        List<Route> routes = routeRepository.findRoutesWithinRadius(latitude, longitude, radius);
-        List<RouteResponseDto> routeDtos = changeRoutesToRouteResponseDtos(routes);
-        return routeDtos;
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Route> routes;
+        switch (orderBy.toLowerCase()) {
+            case "popularity":
+                routes = routeRepository.findRoutesWithinRadiusOrderByPopularity(latitude, longitude, radius, pageable);
+                break;
+            default:
+                //order by recent
+                routes = routeRepository.findRoutesWithinRadiusOrderByCreatedAt(latitude, longitude, radius, pageable);
+                break;
+        }
+        List<RouteResponseDto> routeDtos = changeRoutesToRouteResponseDtos(routes.getContent());
+        System.out.println(routes.getTotalElements());
+        return new RouteListPaginationResponseDto(routeDtos, routes.getTotalPages(), routes.getNumber());
     }
 
     public List<Route> getSavedRoutes(Member member) {

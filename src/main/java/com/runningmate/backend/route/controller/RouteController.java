@@ -4,10 +4,7 @@ import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberRoute;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
-import com.runningmate.backend.route.dto.MemberRouteResponseDto;
-import com.runningmate.backend.route.dto.RouteListResponseDto;
-import com.runningmate.backend.route.dto.RouteRequestDto;
-import com.runningmate.backend.route.dto.RouteResponseDto;
+import com.runningmate.backend.route.dto.*;
 import com.runningmate.backend.route.service.RouteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -44,12 +41,13 @@ public class RouteController {
 
     @GetMapping("/radius")
     @ResponseStatus(HttpStatus.OK)
-    public RouteListResponseDto getRouteWithinRadius(@RequestParam(name = "latitude") double latitude,
-                                                      @RequestParam(name = "longitude") double longitude,
-                                                      @RequestParam(name = "radius") @Max(5000) @Min(0) int radius) {
-        List<RouteResponseDto> routeResponseDtoList = routeService.getRoutesWithinRadius(latitude, longitude, radius);
-
-        return new RouteListResponseDto(routeResponseDtoList);
+    public RouteListPaginationResponseDto getRoutesWithinRadius(@RequestParam(name = "latitude") double latitude,
+                                                                @RequestParam(name = "longitude") double longitude,
+                                                                @RequestParam(name = "radius") @Max(5000) @Min(0) int radius,
+                                                                @RequestParam(name = "orderBy", defaultValue = "recent") String orderBy,
+                                                                @RequestParam(name = "page", defaultValue = "0") @Min(0) int page) {
+        RouteListPaginationResponseDto routeResponseDtoList = routeService.getRoutesWithinRadius(latitude, longitude, radius, orderBy, page);
+        return routeResponseDtoList;
     }
 
     @PostMapping("/{routeId}/save")
