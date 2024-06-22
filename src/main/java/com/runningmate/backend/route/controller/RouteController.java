@@ -9,6 +9,7 @@ import com.runningmate.backend.route.service.RouteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -45,8 +46,10 @@ public class RouteController {
                                                                 @RequestParam(name = "longitude") double longitude,
                                                                 @RequestParam(name = "radius") @Max(5000) @Min(0) int radius,
                                                                 @RequestParam(name = "orderBy", defaultValue = "recent") String orderBy,
-                                                                @RequestParam(name = "page", defaultValue = "0") @Min(0) int page) {
-        RouteListPaginationResponseDto routeResponseDtoList = routeService.getRoutesWithinRadius(latitude, longitude, radius, orderBy, page);
+                                                                @RequestParam(name = "page", defaultValue = "0") @Min(0) int page,
+                                                                @RequestParam(name = "searchTerm", defaultValue = "")
+                                                                    @Size(max = 50) String searchTerm) {
+        RouteListPaginationResponseDto routeResponseDtoList = routeService.getRoutesWithinRadius(latitude, longitude, radius, orderBy, page, searchTerm);
         return routeResponseDtoList;
     }
 

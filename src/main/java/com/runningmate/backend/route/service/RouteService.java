@@ -49,17 +49,28 @@ public class RouteService {
         return new RouteResponseDto(route, translatedCoordinates);
     }
 
-    public RouteListPaginationResponseDto getRoutesWithinRadius(double latitude, double longitude, int radius, String orderBy, int page) {
+    public RouteListPaginationResponseDto getRoutesWithinRadius(double latitude, double longitude, int radius,
+                                                                String orderBy, int page, String searchTerm) {
         validateCoordinate(new CoordinateDto(latitude, longitude));
         Pageable pageable = PageRequest.of(page, 10);
+        String searchTermRemovedWS = searchTerm.trim();
         Page<Route> routes;
         switch (orderBy.toLowerCase()) {
             case "popularity":
-                routes = routeRepository.findRoutesWithinRadiusOrderByPopularity(latitude, longitude, radius, pageable);
+                if (searchTermRemovedWS.isEmpty()) {
+                    routes = routeRepository.findRoutesWithinRadiusOrderByPopularity(latitude, longitude, radius, pageable);
+                } else {
+                    routes = routeRepository.searchRoutesWithinRadiusOrderByPopularity(searchTermRemovedWS, latitude, longitude, radius, pageable);
+
+                }
                 break;
             default:
                 //order by recent
-                routes = routeRepository.findRoutesWithinRadiusOrderByCreatedAt(latitude, longitude, radius, pageable);
+                if (searchTermRemovedWS.isEmpty()) {
+                    routes = routeRepository.findRoutesWithinRadiusOrderByCreatedAt(latitude, longitude, radius, pageable);
+                } else {
+                    routes = routeRepository.searchRoutesWithinRadiusOrderByCreatedAt(searchTermRemovedWS, latitude, longitude, radius, pageable);
+                }
                 break;
         }
         List<RouteResponseDto> routeDtos = changeRoutesToRouteResponseDtos(routes.getContent());

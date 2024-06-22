@@ -34,4 +34,34 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
                                                        @Param("longitude") double longitude,
                                                        @Param("radius") int radius,
                                                        Pageable pageable);
+
+    @Query(value = "SELECT r.* FROM route r " +
+            "LEFT JOIN member_route mr ON r.id = mr.route_id " +
+            "WHERE (LOWER(r.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "AND ST_DWithin(r.path, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), :radius) " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(CASE WHEN mr.liked = true THEN 1 ELSE NULL END) DESC, r.created_at DESC",
+            countQuery = "SELECT count(*) FROM route r " +
+                    "WHERE (LOWER(r.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+                    "AND ST_DWithin(r.path, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), :radius)",
+            nativeQuery = true)
+    Page<Route> searchRoutesWithinRadiusOrderByPopularity(@Param("searchTerm") String searchTerm,
+                                                          @Param("latitude") double latitude,
+                                                          @Param("longitude") double longitude,
+                                                          @Param("radius") int radius,
+                                                          Pageable pageable);
+
+    @Query(value = "SELECT * FROM route r " +
+            "WHERE (LOWER(r.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+            "AND ST_DWithin(r.path, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), :radius) " +
+            "ORDER BY r.created_at DESC",
+            countQuery = "SELECT count(*) FROM route r " +
+                    "WHERE (LOWER(r.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
+                    "AND ST_DWithin(r.path, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), :radius)",
+            nativeQuery = true)
+    Page<Route> searchRoutesWithinRadiusOrderByCreatedAt(@Param("searchTerm") String searchTerm,
+                                                         @Param("latitude") double latitude,
+                                                         @Param("longitude") double longitude,
+                                                         @Param("radius") int radius,
+                                                         Pageable pageable);
 }
