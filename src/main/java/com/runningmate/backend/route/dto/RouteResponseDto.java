@@ -16,6 +16,7 @@ import java.util.List;
 public class RouteResponseDto {
     private Long id;
     private String title;
+    private String details;
     private Double distance;
     private Integer difficulty;
 //    private String time;
@@ -28,6 +29,7 @@ public class RouteResponseDto {
         this.member = MemberDto.fromEntity(route.getMember());
         this.distance = route.getDistance();
         this.difficulty = route.getDifficulty();
+        this.details = route.getDetails();
 //        this.time = route.getTime();
         this.title = route.getTitle();
         this.route = routes;

@@ -34,6 +34,9 @@ public class Route extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(length = 1000)
+    private String details;
+
     @Column(nullable = false)
     private Integer difficulty;
 

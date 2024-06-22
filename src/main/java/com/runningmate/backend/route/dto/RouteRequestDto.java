@@ -28,6 +28,9 @@ public class RouteRequestDto {
     @NotBlank(message = "Title must be given.")
     private String title;
 
+    @Size(max = 1000, message = "Max 1000 characters for details.")
+    private String details;
+
     //Remove time for now. Might add again later
 //    @NotBlank(message = "Time must be given")
 //    @Pattern(regexp = "^(2[0-4]|[01]?[0-9]):[0-5][0-9]$|^(2[0-4]|[01]?[0-9])$", message = "Invalid time format. HH:MM, H:MM, M, MM")
