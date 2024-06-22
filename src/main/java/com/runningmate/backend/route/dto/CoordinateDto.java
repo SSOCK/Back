@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CoordinateDto {
 
-    @JsonProperty("La")
-    private double latitude;
     @JsonProperty("Ma")
+    private double latitude;
+    @JsonProperty("La")
     private double longitude;
 }
