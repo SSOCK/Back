@@ -56,50 +56,50 @@ public class RouteController {
 
     @PostMapping("/savelists")
     @ResponseStatus(HttpStatus.CREATED)
-    public RouteSaveListResponseDto createRouteSaveList(@Valid @RequestBody RouteSaveListRequestDto request, @RequestParam String username) {
-        return routeService.createNewRouteSaveList(request, username);
+    public RouteSaveListResponseDto createRouteSaveList(@Valid @RequestBody RouteSaveListRequestDto request, @AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.createNewRouteSaveList(request, userDetails.getUsername());
     }
 
     @DeleteMapping("/savelists/{listId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRouteSaveList(@PathVariable Long listId, @RequestParam String username) {
-        routeService.deleteRouteSaveList(listId, username);
+    public void deleteRouteSaveList(@PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        routeService.deleteRouteSaveList(listId, userDetails.getUsername());
     }
 
     @GetMapping("/savelists")
     @ResponseStatus(HttpStatus.OK)
-    public List<RouteSaveListResponseDto> getRouteSaveLists(@RequestParam String username) {
-        return routeService.getAllRouteSaveLists(username);
+    public List<RouteSaveListResponseDto> getRouteSaveLists(@AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.getAllRouteSaveLists(userDetails.getUsername());
     }
 
     @GetMapping("/savelists/{listId}")
     @ResponseStatus(HttpStatus.OK)
-    public RouteSaveListResponseDto getRouteSaveList(@PathVariable Long listId, @RequestParam String username) {
-        return routeService.getRouteSaveList(listId, username);
+    public RouteSaveListResponseDto getRouteSaveList(@PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.getRouteSaveList(listId, userDetails.getUsername());
     }
 
     @PostMapping("/savelists/{listId}/routes/{routeId}/save")
     @ResponseStatus(HttpStatus.CREATED)
-    public MemberRouteDto saveRouteToList(@PathVariable Long routeId, @PathVariable Long listId, @RequestParam String username) {
-        return routeService.saveRouteToList(routeId, username, listId);
+    public MemberRouteDto saveRouteToList(@PathVariable Long routeId, @PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.saveRouteToList(routeId, userDetails.getUsername(), listId);
     }
 
     @DeleteMapping("/savelists/{listId}/routes/{routeId}/unsave")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void unsaveRouteFromList(@PathVariable Long routeId, @PathVariable Long listId, @RequestParam String username) {
-        routeService.unsaveRouteFromList(routeId, username, listId);
+    public void unsaveRouteFromList(@PathVariable Long routeId, @PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        routeService.unsaveRouteFromList(routeId, userDetails.getUsername(), listId);
     }
 
     @PutMapping("/savelists/{listId}/public")
     @ResponseStatus(HttpStatus.OK)
-    public RouteSaveListResponseDto makeRouteSaveListPublic(@PathVariable Long listId, @RequestParam String username) {
-        return routeService.makeRouteSaveListPublic(listId, username);
+    public RouteSaveListResponseDto makeRouteSaveListPublic(@PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.makeRouteSaveListPublic(listId, userDetails.getUsername());
     }
 
     @PutMapping("/savelists/{listId}/private")
     @ResponseStatus(HttpStatus.OK)
-    public RouteSaveListResponseDto makeRouteSaveListPrivate(@PathVariable Long listId, @RequestParam String username) {
-        return routeService.makeRouteSaveListPrivate(listId, username);
+    public RouteSaveListResponseDto makeRouteSaveListPrivate(@PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
+        return routeService.makeRouteSaveListPrivate(listId, userDetails.getUsername());
     }
 
 }
