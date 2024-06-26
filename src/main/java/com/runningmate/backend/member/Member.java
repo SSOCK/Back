@@ -47,10 +47,6 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    @Builder.Default
-    private List<MemberRoute> memberRoutes = new ArrayList<>();
-
     @Column
     @Builder.Default
     private String profilePicture = DEFAULT_PROFILE_PIC;
