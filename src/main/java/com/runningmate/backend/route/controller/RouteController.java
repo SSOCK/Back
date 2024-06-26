@@ -1,5 +1,6 @@
 package com.runningmate.backend.route.controller;
 
+import com.runningmate.backend.dto.DataListResponseDTO;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberRoute;
 import com.runningmate.backend.member.dto.MemberRouteDto;
@@ -68,8 +69,8 @@ public class RouteController {
 
     @GetMapping("/savelists")
     @ResponseStatus(HttpStatus.OK)
-    public List<RouteSaveListResponseDto> getRouteSaveLists(@AuthenticationPrincipal UserDetails userDetails) {
-        return routeService.getAllRouteSaveLists(userDetails.getUsername());
+    public DataListResponseDTO<RouteSaveListResponseDto> getRouteSaveLists(@AuthenticationPrincipal UserDetails userDetails) {
+        return new DataListResponseDTO<>(routeService.getAllRouteSaveLists(userDetails.getUsername()));
     }
 
     @GetMapping("/savelists/{listId}")
