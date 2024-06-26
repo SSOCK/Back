@@ -28,6 +28,9 @@ public class RouteSaveList extends BaseTimeEntity {
     @Column
     private String name;
 
+    @Column(nullable = false)
+    private boolean isPublic;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

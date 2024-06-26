@@ -95,6 +95,7 @@ public class RouteService {
         // Create a new RouteSaveList entity
         RouteSaveList routeSaveList = RouteSaveList.builder()
                 .name(request.getName())
+                .isPublic(request.isPublic())
                 .member(member)
                 .build();
 
@@ -146,8 +147,8 @@ public class RouteService {
         RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
                 .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
 
-        // Check if the RouteSaveList belongs to the member
-        if (!routeSaveList.getMember().getUsername().equals(username)) {
+        // Check if the RouteSaveList is public or RouteSaveList belongs to the member
+        if (!routeSaveList.isPublic() && !routeSaveList.getMember().getUsername().equals(username)) {
             throw new NoPermissionException("You do not have permission to view this RouteSaveList");
         }
 
@@ -226,6 +227,54 @@ public class RouteService {
 
         // Delete the RouteSaveListMemberRoute entity
         routeSaveListMemberRouteRepository.delete(routeSaveListMemberRoute);
+    }
+
+    @Transactional
+    public RouteSaveListResponseDto makeRouteSaveListPublic(Long listId, String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to make this RouteSaveList public");
+        }
+
+        // Set the RouteSaveList to public
+        routeSaveList.setPublic(true);
+
+        // Save the RouteSaveList entity
+        routeSaveListRepository.save(routeSaveList);
+
+        // Return the DTO
+        return new RouteSaveListResponseDto(routeSaveList);
+    }
+
+    @Transactional
+    public RouteSaveListResponseDto makeRouteSaveListPrivate(Long listId, String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to make this RouteSaveList private");
+        }
+
+        // Set the RouteSaveList to private
+        routeSaveList.setPublic(false);
+
+        // Save the RouteSaveList entity
+        routeSaveListRepository.save(routeSaveList);
+
+        // Return the DTO
+        return new RouteSaveListResponseDto(routeSaveList);
     }
 
     public List<RouteResponseDto> changeRoutesToRouteResponseDtos(List<Route> routes) {
