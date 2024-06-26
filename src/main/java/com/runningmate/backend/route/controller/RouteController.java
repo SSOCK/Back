@@ -56,7 +56,7 @@ public class RouteController {
 
     @PostMapping("/savelists")
     @ResponseStatus(HttpStatus.CREATED)
-    public RouteSaveListResponseDto createRouteSaveList(@RequestBody RouteSaveListRequestDto request, @RequestParam String username) {
+    public RouteSaveListResponseDto createRouteSaveList(@Valid @RequestBody RouteSaveListRequestDto request, @RequestParam String username) {
         return routeService.createNewRouteSaveList(request, username);
     }
 

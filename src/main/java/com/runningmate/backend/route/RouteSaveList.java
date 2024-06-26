@@ -4,6 +4,7 @@ import com.runningmate.backend.entity.BaseTimeEntity;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberRoute;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class RouteSaveList extends BaseTimeEntity {
     private long id;
 
     @Column
+    @Size(min = 1, max = 50)
     private String name;
 
     @Column(nullable = false)
