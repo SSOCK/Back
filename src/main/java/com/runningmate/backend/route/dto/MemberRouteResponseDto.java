@@ -15,7 +15,5 @@ public class MemberRouteResponseDto {
     public MemberRouteResponseDto(MemberRoute memberRoute) {
         this.memberId = memberRoute.getMember().getId();
         this.routeId = memberRoute.getRoute().getId();
-        this.liked = memberRoute.isLiked();
-        this.saved = memberRoute.isSaved();
     }
 }
