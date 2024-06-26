@@ -2,6 +2,7 @@ package com.runningmate.backend.route.controller;
 
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberRoute;
+import com.runningmate.backend.member.dto.MemberRouteDto;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
 import com.runningmate.backend.route.dto.*;
@@ -53,43 +54,40 @@ public class RouteController {
         return routeResponseDtoList;
     }
 
-    @PostMapping("/{routeId}/save")
+    @PostMapping("/savelists")
     @ResponseStatus(HttpStatus.CREATED)
-    public MemberRouteResponseDto saveRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
-        Member member = memberService.getMemberByUsername(userDetails.getUsername());
-        MemberRoute memberRoute = routeService.saveRoute(routeId, member);
-        return new MemberRouteResponseDto(memberRoute);
+    public RouteSaveListResponseDto createRouteSaveList(@RequestBody RouteSaveListRequestDto request, @RequestParam String username) {
+        return routeService.createNewRouteSaveList(request, username);
     }
 
-    @DeleteMapping("/{routeId}/unsave")
-    @ResponseStatus(HttpStatus.OK) //Return 200 instead of 204 for uniformity
-    public void unsaveRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
-        Member member = memberService.getMemberByUsername(userDetails.getUsername());
-        routeService.unsaveRoute(routeId, member);
+    @DeleteMapping("/savelists/{listId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRouteSaveList(@PathVariable Long listId, @RequestParam String username) {
+        routeService.deleteRouteSaveList(listId, username);
     }
 
-    @PostMapping("/{routeId}/like")
-    @ResponseStatus(HttpStatus.CREATED)
-    public MemberRouteResponseDto likeRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
-        Member member = memberService.getMemberByUsername(userDetails.getUsername());
-        MemberRoute memberRoute = routeService.likeRoute(routeId, member);
-        return new MemberRouteResponseDto(memberRoute);
-    }
-
-    @DeleteMapping("/{routeId}/unlike")
-    @ResponseStatus(HttpStatus.OK) //Return 200 instead of 204 for uniformity
-    public void unlikeRoute(@PathVariable(name = "routeId") Long routeId, @AuthenticationPrincipal UserDetails userDetails) {
-        Member member = memberService.getMemberByUsername(userDetails.getUsername());
-        routeService.unlikeRoute(routeId, member);
-    }
-
-    @GetMapping("/saved")
+    @GetMapping("/savelists")
     @ResponseStatus(HttpStatus.OK)
-    public RouteListResponseDto getSavedRoutes(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        Member member = memberService.getMemberByUsername(username);
-        List<Route> routes = routeService.getSavedRoutes(member);
-        List<RouteResponseDto> routeResponseDtos = routeService.changeRoutesToRouteResponseDtos(routes);
-        return new RouteListResponseDto(routeResponseDtos);
+    public List<RouteSaveListResponseDto> getRouteSaveLists(@RequestParam String username) {
+        return routeService.getAllRouteSaveLists(username);
     }
+
+    @GetMapping("/savelists/{listId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RouteSaveListResponseDto getRouteSaveList(@PathVariable Long listId, @RequestParam String username) {
+        return routeService.getRouteSaveList(listId, username);
+    }
+
+    @PostMapping("/savelists/{listId}/routes/{routeId}/save")
+    @ResponseStatus(HttpStatus.CREATED)
+    public MemberRouteDto saveRouteToList(@PathVariable Long routeId, @PathVariable Long listId, @RequestParam String username) {
+        return routeService.saveRouteToList(routeId, username, listId);
+    }
+
+    @DeleteMapping("/savelists/{listId}/routes/{routeId}/unsave")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unsaveRouteFromList(@PathVariable Long routeId, @PathVariable Long listId, @RequestParam String username) {
+        routeService.unsaveRouteFromList(routeId, username, listId);
+    }
+
 }
