@@ -14,7 +14,7 @@ public class RouteSaveListResponseDto {
     private Long id;
     private String name;
     private String memberUsername;
-
+    private boolean isPublic;
     private int routeCount;
     private List<MemberRouteDto> memberRoutes;
 
@@ -23,6 +23,7 @@ public class RouteSaveListResponseDto {
         this.id = routeSaveList.getId();
         this.name = routeSaveList.getName();
         this.memberUsername = routeSaveList.getMember().getUsername();
+        this.isPublic = routeSaveList.isPublic();
         this.routeCount = routeSaveList.getRouteSaveListMemberRoutes().size();
     }
 

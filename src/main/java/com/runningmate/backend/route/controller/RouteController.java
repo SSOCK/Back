@@ -90,4 +90,16 @@ public class RouteController {
         routeService.unsaveRouteFromList(routeId, username, listId);
     }
 
+    @PutMapping("/savelists/{listId}/public")
+    @ResponseStatus(HttpStatus.OK)
+    public RouteSaveListResponseDto makeRouteSaveListPublic(@PathVariable Long listId, @RequestParam String username) {
+        return routeService.makeRouteSaveListPublic(listId, username);
+    }
+
+    @PutMapping("/savelists/{listId}/private")
+    @ResponseStatus(HttpStatus.OK)
+    public RouteSaveListResponseDto makeRouteSaveListPrivate(@PathVariable Long listId, @RequestParam String username) {
+        return routeService.makeRouteSaveListPrivate(listId, username);
+    }
+
 }
