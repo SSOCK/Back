@@ -1,15 +1,21 @@
 package com.runningmate.backend.route.service;
 
 import com.runningmate.backend.exception.BadRequestException;
+import com.runningmate.backend.exception.NoPermissionException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.MemberRoute;
 import com.runningmate.backend.member.dto.MemberDto;
+import com.runningmate.backend.member.dto.MemberRouteDto;
 import com.runningmate.backend.member.repository.MemberRouteRepository;
 import com.runningmate.backend.member.service.MemberService;
 import com.runningmate.backend.route.Route;
+import com.runningmate.backend.route.RouteSaveList;
+import com.runningmate.backend.route.RouteSaveListMemberRoute;
 import com.runningmate.backend.route.dto.*;
 import com.runningmate.backend.route.repository.RouteRepository;
+import com.runningmate.backend.route.repository.RouteSaveListMemberRouteRepository;
+import com.runningmate.backend.route.repository.RouteSaveListRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -24,12 +30,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RouteService {
     private final RouteRepository routeRepository;
     private final MemberRouteRepository memberRouteRepository;
+    private final RouteSaveListMemberRouteRepository routeSaveListMemberRouteRepository;
+    private final RouteSaveListRepository routeSaveListRepository;
     private final MemberService memberService;
 
     @Transactional
@@ -78,78 +87,145 @@ public class RouteService {
         return new RouteListPaginationResponseDto(routeDtos, routes.getTotalPages(), routes.getNumber());
     }
 
-    public List<Route> getSavedRoutes(Member member) {
-        List<MemberRoute> memberRoutes = memberRouteRepository.findByMemberAndSavedTrue(member);
-        List<Route> routes = new ArrayList<>();
-        for (MemberRoute memberRoute: memberRoutes) {
-            routes.add(memberRoute.getRoute());
-        }
-        return routes;
-    }
-
     @Transactional
-    public MemberRoute saveRoute(Long routeId, Member member) {
-        Route route = routeRepository.findById(routeId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
-                );
-        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
-        MemberRoute memberRoute = memberRouteOptional.orElseGet(() -> MemberRoute.builder()
-                .route(route)
+    public RouteSaveListResponseDto createNewRouteSaveList(RouteSaveListRequestDto request, String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Create a new RouteSaveList entity
+        RouteSaveList routeSaveList = RouteSaveList.builder()
+                .name(request.getName())
                 .member(member)
-                .build());
+                .build();
 
-        memberRoute.saveRoute();
-        return memberRouteRepository.save(memberRoute);
+        // Save the RouteSaveList entity to the database
+        routeSaveListRepository.save(routeSaveList);
+
+        // Return the response DTO
+        return new RouteSaveListResponseDto(routeSaveList);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RouteSaveListResponseDto> getAllRouteSaveLists(String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Retrieve all RouteSaveList entities for the member
+        List<RouteSaveList> routeSaveLists = routeSaveListRepository.findByMember(member);
+
+        // Convert to DTOs and return
+        return routeSaveLists.stream()
+                .map(RouteSaveListResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public void unsaveRoute(Long routeId, Member member) {
-        Route route = routeRepository.findById(routeId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
-                );
-        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
-        if (memberRouteOptional.isPresent()) {
-            MemberRoute memberRoute = memberRouteOptional.get();
-            memberRoute.unsaveRoute();
-            if (!memberRoute.isLiked() && !memberRoute.isSaved()) {
-                memberRouteRepository.delete(memberRoute);
-            } else {
-                memberRouteRepository.save(memberRoute);
-            }
+    public void deleteRouteSaveList(Long listId, String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to delete this RouteSaveList");
         }
+
+        // Delete the RouteSaveList
+        routeSaveListRepository.delete(routeSaveList);
     }
 
-    @Transactional
-    public MemberRoute likeRoute(Long routeId, Member member) {
-        Route route = routeRepository.findById(routeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Route with id " + routeId + " does not exist."));
-        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
-        MemberRoute memberRoute = memberRouteOptional.orElseGet(() -> MemberRoute.builder()
-                .route(route)
-                .member(member)
-                .build());
-        memberRoute.likeRoute();
-        return memberRouteRepository.save(memberRoute);
-    }
+    @Transactional(readOnly = true)
+    public RouteSaveListResponseDto getRouteSaveList(Long listId, String username) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
 
-    @Transactional
-    public void unlikeRoute(Long routeId, Member member) {
-        Route route = routeRepository.findById(routeId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Route with id " + routeId + " does not exist.")
-                );
-        Optional<MemberRoute> memberRouteOptional = memberRouteRepository.findByMemberIdAndRouteId(member.getId(), routeId);
-        if (memberRouteOptional.isPresent()) {
-            MemberRoute memberRoute = memberRouteOptional.get();
-            memberRoute.unlikeRoute();
-            if (!memberRoute.isLiked() && !memberRoute.isSaved()) {
-                memberRouteRepository.delete(memberRoute);
-            } else {
-                memberRouteRepository.save(memberRoute);
-            }
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to view this RouteSaveList");
         }
+
+        // Return the DTO
+        return new RouteSaveListResponseDto(routeSaveList, true);
+    }
+
+    @Transactional
+    public MemberRouteDto saveRouteToList(Long routeId, String username, Long listId) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Find the route by ID
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Route with id " + routeId + " does not exist"));
+
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to save a route to this list");
+        }
+
+        // Find or create the MemberRoute entity
+        MemberRoute memberRoute = memberRouteRepository.findByMemberAndRoute(member, route)
+                .orElseGet(() -> MemberRoute.builder()
+                        .member(member)
+                        .route(route)
+                        .build());
+
+        // Check if the association already exists
+        boolean alreadyExists = routeSaveListMemberRouteRepository.existsByRouteSaveListAndMemberRoute(routeSaveList, memberRoute);
+        if (alreadyExists) {
+            throw new BadRequestException("Route is already saved in the list");
+        }
+
+        // Create and save the RouteSaveListMemberRoute entity
+        RouteSaveListMemberRoute routeSaveListMemberRoute = RouteSaveListMemberRoute.builder()
+                .routeSaveList(routeSaveList)
+                .memberRoute(memberRoute)
+                .build();
+        routeSaveListMemberRouteRepository.save(routeSaveListMemberRoute);
+
+        MemberRoute memberRouteCreated = memberRouteRepository.save(memberRoute);
+
+        return new MemberRouteDto(memberRouteCreated);
+    }
+
+    @Transactional
+    public void unsaveRouteFromList(Long routeId, String username, Long listId) {
+        // Get the member by username
+        Member member = memberService.getMemberByUsername(username);
+
+        // Find the route by ID
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Route with id " + routeId + " does not exist"));
+
+        // Find the RouteSaveList by ID
+        RouteSaveList routeSaveList = routeSaveListRepository.findById(listId)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveList with id " + listId + " does not exist"));
+
+        // Check if the RouteSaveList belongs to the member
+        if (!routeSaveList.getMember().getUsername().equals(username)) {
+            throw new NoPermissionException("You do not have permission to save a route to this list");
+        }
+
+        // Find the MemberRoute entity
+        MemberRoute memberRoute = memberRouteRepository.findByMemberAndRoute(member, route)
+                .orElseThrow(() -> new ResourceNotFoundException("MemberRoute with route id " + routeId + " for member " + member.getUsername() + " does not exist"));
+
+        // Find the RouteSaveListMemberRoute entity
+        RouteSaveListMemberRoute routeSaveListMemberRoute = routeSaveListMemberRouteRepository.findByRouteSaveListAndMemberRoute(routeSaveList, memberRoute)
+                .orElseThrow(() -> new ResourceNotFoundException("RouteSaveListMemberRoute with route id " + routeId + " in list id " + listId + " does not exist"));
+
+        // Delete the RouteSaveListMemberRoute entity
+        routeSaveListMemberRouteRepository.delete(routeSaveListMemberRoute);
     }
 
     public List<RouteResponseDto> changeRoutesToRouteResponseDtos(List<Route> routes) {
