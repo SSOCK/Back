@@ -1,5 +1,6 @@
 package com.runningmate.backend.route.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.runningmate.backend.member.Member;
 import com.runningmate.backend.member.dto.MemberRouteDto;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RouteSaveListResponseDto {
     private Long id;
     private String name;
