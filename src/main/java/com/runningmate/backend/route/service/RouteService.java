@@ -196,7 +196,7 @@ public class RouteService {
         // Check if the association already exists
         boolean alreadyExists = routeSaveListMemberRouteRepository.existsByRouteSaveListAndMemberRoute(routeSaveList, memberRoute);
         if (alreadyExists) {
-            throw new BadRequestException("Route is already saved in the list");
+            throw new ExistsConflictException("Route is already saved in the list");
         }
 
         // Create and save the RouteSaveListMemberRoute entity
