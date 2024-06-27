@@ -79,13 +79,13 @@ public class RouteController {
         return routeService.getRouteSaveList(listId, userDetails.getUsername());
     }
 
-    @PostMapping("/savelists/{listId}/routes/{routeId}/save")
+    @PostMapping("/savelists/{listId}/courses/{courseId}/save")
     @ResponseStatus(HttpStatus.CREATED)
     public MemberRouteDto saveRouteToList(@PathVariable Long routeId, @PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
         return routeService.saveRouteToList(routeId, userDetails.getUsername(), listId);
     }
 
-    @DeleteMapping("/savelists/{listId}/routes/{routeId}/unsave")
+    @DeleteMapping("/savelists/{listId}/courses/{courseId}/unsave")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unsaveRouteFromList(@PathVariable Long routeId, @PathVariable Long listId, @AuthenticationPrincipal UserDetails userDetails) {
         routeService.unsaveRouteFromList(routeId, userDetails.getUsername(), listId);
