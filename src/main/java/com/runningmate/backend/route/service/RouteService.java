@@ -188,6 +188,11 @@ public class RouteService {
                         .route(route)
                         .build());
 
+        // Save the MemberRoute entity if it's new to avoid TransientObjectException
+        if (memberRoute.getId() == null) {
+            memberRoute = memberRouteRepository.save(memberRoute);
+        }
+
         // Check if the association already exists
         boolean alreadyExists = routeSaveListMemberRouteRepository.existsByRouteSaveListAndMemberRoute(routeSaveList, memberRoute);
         if (alreadyExists) {
