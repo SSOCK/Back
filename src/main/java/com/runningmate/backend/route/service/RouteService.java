@@ -1,6 +1,7 @@
 package com.runningmate.backend.route.service;
 
 import com.runningmate.backend.exception.BadRequestException;
+import com.runningmate.backend.exception.ExistsConflictException;
 import com.runningmate.backend.exception.NoPermissionException;
 import com.runningmate.backend.exception.ResourceNotFoundException;
 import com.runningmate.backend.member.Member;
@@ -91,6 +92,12 @@ public class RouteService {
     public RouteSaveListResponseDto createNewRouteSaveList(RouteSaveListRequestDto request, String username) {
         // Get the member by username
         Member member = memberService.getMemberByUsername(username);
+
+        // Check if user already has RouteSaveList with the same name
+        boolean exists = routeSaveListRepository.existsByNameAndMember(request.getName(), member);
+        if (exists) {
+            throw new ExistsConflictException("A RouteSaveList with the name '" + request.getName() + "' already exists for this user.");
+        }
 
         // Create a new RouteSaveList entity
         RouteSaveList routeSaveList = RouteSaveList.builder()
