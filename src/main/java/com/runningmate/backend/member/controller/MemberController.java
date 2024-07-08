@@ -59,4 +59,11 @@ public class MemberController {
         String imageUrl = gcsFileStorageService.storeFile(image);
         return MemberDto.fromEntity(memberService.updateMemberProfilePicture(member, imageUrl));
     }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/profile/{username}")
+    public MemberDto getMemberProfileByUsername(@PathVariable(name = "username") String username) {
+        Member member = memberService.getMemberByUsername(username);
+        return MemberDto.fromEntity(member);
+    }
 }
