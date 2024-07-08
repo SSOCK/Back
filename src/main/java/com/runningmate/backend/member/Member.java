@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseTimeEntity {
-    public static final String DEFAULT_PROFILE_PIC = "https://storage.googleapis.com/runningmate-bucket/Screenshot%202024-06-20%20at%203.46.14%E2%80%AFPM.png";
+    public static final String DEFAULT_PROFILE_PIC = "https://storage.googleapis.com/runningmate-bucket/ajakteman-com%20(1).png";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
