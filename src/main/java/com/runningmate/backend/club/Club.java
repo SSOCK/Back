@@ -47,4 +47,12 @@ public class Club {
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ClubScheduleEntity> clubs = new ArrayList<>();
+
+    public void updateProfilePic(String url) {
+        this.profile_pic = url;
+    }
+
+    public void updateBackgroundPic(String url) {
+        this.background_pic = url;
+    }
 }
