@@ -32,8 +32,8 @@ public class ClubScheduleEntityService {
     }
 
     @Transactional(readOnly = true)
-    public List<ClubScheduleEntity> getAllClubSchedules() {
-        return clubScheduleEntityRepository.findAll();
+    public List<ClubScheduleEntity> getClubSchedules(Long clubId) {
+        return clubScheduleEntityRepository.findByClubId(clubId);
     }
 
     @Transactional
