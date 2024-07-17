@@ -44,7 +44,6 @@ public class CreateOrUpdateScheduleRequestDto {
     private LocalDateTime dateTime;
 
     @NotNull(message = "Location must not be null")
-    @JsonUnwrapped
     private CoordinateDto location;
 
     public Point getLocation() {

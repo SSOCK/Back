@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ListClubScheduleEntityResponseDto {
-    private List<ClubScheduleEntityResponseDto> clubScheduleEntityResponseDtos;
+    private List<ClubScheduleEntityResponseDto> schedules;
 }
