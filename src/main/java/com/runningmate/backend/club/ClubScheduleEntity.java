@@ -1,6 +1,6 @@
 package com.runningmate.backend.club;
 
-import com.runningmate.backend.member.Member;
+import com.runningmate.backend.club.dto.CreateOrUpdateClubScheduleRequestDto;
 import com.runningmate.backend.schedule.Schedule;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,4 +24,8 @@ public class ClubScheduleEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
+
+    public void update(CreateOrUpdateClubScheduleRequestDto updateDto) {
+        this.schedule.update(updateDto.getCreateOrUpdateScheduleRequestDto());
+    }
 }
