@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoPermissionException.class)
     public ResponseEntity<ErrorMessageResponseDTO> handleNoPermissionException(NoPermissionException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageResponseDTO(e.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(BadRequestException.class)
