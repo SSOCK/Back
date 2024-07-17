@@ -1,6 +1,7 @@
 package com.runningmate.backend.schedule;
 
 import com.runningmate.backend.entity.BaseTimeEntity;
+import com.runningmate.backend.schedule.dto.CreateOrUpdateScheduleRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
@@ -27,12 +28,16 @@ public class Schedule extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
+    @Column(nullable = false)
+    private String description;
+
     @Column(columnDefinition = "geography(Point, 4326)")
     private Point location;
 
-    public void update(String name, LocalDateTime dateTime, Point location) {
-        this.name = name;
-        this.dateTime = dateTime;
-        this.location = location;
+    public void update(CreateOrUpdateScheduleRequestDto updateDto) {
+        this.name = updateDto.getTitle();
+        this.description = updateDto.getDescription();
+        this.dateTime = updateDto.getDateTime();
+        this.location = updateDto.getLocation();
     }
 }
