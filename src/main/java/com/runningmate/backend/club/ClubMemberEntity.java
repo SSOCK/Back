@@ -28,6 +28,8 @@ public class ClubMemberEntity {
     @Builder.Default
     private ClubRole role = ClubRole.MEMBER;
 
-
+    public void changeRole(ClubRole clubRole) {
+        this.role = clubRole;
+    }
 
 }
