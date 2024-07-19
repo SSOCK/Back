@@ -8,6 +8,7 @@ import com.runningmate.backend.posts.Comment;
 import com.runningmate.backend.posts.Post;
 import com.runningmate.backend.posts.dto.CommentRequestDto;
 import com.runningmate.backend.posts.dto.CommentResponseDto;
+import com.runningmate.backend.posts.dto.PostResponseDto;
 import com.runningmate.backend.posts.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentResponseDto saveComment(String username, CommentRequestDto dto, Long postId) {
+    public PostResponseDto saveComment(String username, CommentRequestDto dto, Long postId) {
         Member member = memberService.getMemberByUsername(username);
         Post post = postService.getPostById(postId);
 
         Comment comment = dto.toEntity(member, post);
         commentRepository.save(comment);
-        return new CommentResponseDto(comment);
+        //This causes unnecessary fetching but leave at is for now
+        PostResponseDto updatedPostDto = postService.getOnePost(post.getId(), member);
+        return updatedPostDto;
     }
 
     public void deleteComment(Long commentId, String username) {

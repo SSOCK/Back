@@ -89,7 +89,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{postId}/comments")
-    public CommentResponseDto commentOnPost(@PathVariable(name = "postId") Long postId,
+    public PostResponseDto commentOnPost(@PathVariable(name = "postId") Long postId,
                                             @Valid @RequestBody CommentRequestDto commentRequestDto, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return commentService.saveComment(userDetails.getUsername(), commentRequestDto, postId);
