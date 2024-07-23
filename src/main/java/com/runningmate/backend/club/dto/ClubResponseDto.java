@@ -1,5 +1,6 @@
 package com.runningmate.backend.club.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.runningmate.backend.club.Club;
 import com.runningmate.backend.club.ClubMemberEntity;
 import com.runningmate.backend.member.dto.MemberDto;
@@ -22,7 +23,8 @@ public class ClubResponseDto {
     private UUID id;
     private String title;
     private String description;
-    private CoordinateDto location;
+    private String locationName;
+    private CoordinateDto locationCoordinate;
     private String profilePic;
     private String backgroundPic;
     private List<MemberDto> clubMembers;
@@ -33,7 +35,8 @@ public class ClubResponseDto {
                 .id(club.getId())
                 .title(club.getTitle())
                 .description(club.getDescription())
-                .location(PointCreator.toCoordinateDto(club.getLocation()))
+                .locationName(club.getLocationName())
+                .locationCoordinate(PointCreator.toCoordinateDto(club.getLocationCoordinate()))
                 .profilePic(club.getProfile_pic())
                 .backgroundPic(club.getBackground_pic())
                 .clubMembers(club.getMembers().stream()
