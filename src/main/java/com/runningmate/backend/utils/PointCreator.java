@@ -15,7 +15,7 @@ public class PointCreator {
 
     public static CoordinateDto toCoordinateDto(Point point) {
         if (point == null) {
-            throw new IllegalArgumentException("Point cannot be null");
+            return null;
         }
         return new CoordinateDto(point.getY(), point.getX());
     }
