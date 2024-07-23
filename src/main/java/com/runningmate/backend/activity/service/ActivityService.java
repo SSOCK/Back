@@ -24,9 +24,8 @@ public class ActivityService {
 
     @Transactional
     public ListActivityResponseDto getAllActivitiesInDescOrder(Long memberId) {
-        //Should be existsBy but don't have that method in memberService yet
-        memberService.getMemberById(memberId);
-        List<Activity> activities = activityRepository.findAllByMemberOrderByCreatedAtDesc();
+        Member member = memberService.getMemberById(memberId);
+        List<Activity> activities = activityRepository.findAllByMemberOrderByCreatedAtDesc(member);
         List<NewActivityResponseDto> activityResponseDtos= activities.stream()
                 .map(NewActivityResponseDto::fromEntity)
                 .toList();
