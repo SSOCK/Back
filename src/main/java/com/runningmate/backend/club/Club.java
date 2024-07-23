@@ -26,8 +26,10 @@ public class Club extends BaseTimeEntity {
 
     private String description; //TODO: updateDetail method
 
+    private String locationName;
+
     @Column(columnDefinition = "geography(Point, 4326)")
-    private Point location;
+    private Point locationCoordinate;
 
     @Builder.Default
     @Column(nullable = false)

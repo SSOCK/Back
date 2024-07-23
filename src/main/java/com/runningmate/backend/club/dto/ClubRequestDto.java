@@ -1,5 +1,6 @@
 package com.runningmate.backend.club.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.runningmate.backend.club.Club;
 import com.runningmate.backend.route.dto.CoordinateDto;
@@ -23,14 +24,18 @@ public class ClubRequestDto {
     @Size(max = 500, message = "Detail must not exceed 500 characters")
     private String description;
 
+    @Size(max = 100, message = "Location name is too long bro")
+    private String locationName;
+
     @NotNull(message = "Location must not be null")
-    private CoordinateDto location;
+    private CoordinateDto locationCoordinate;
 
     public Club toEntity() {
         return Club.builder()
                 .title(this.title)
                 .description(this.description)
-                .location(PointCreator.createPoint(this.location.getLongitude(), this.location.getLatitude()))
+                .locationName(this.locationName)
+                .locationCoordinate(PointCreator.createPoint(this.locationCoordinate.getLongitude(), this.locationCoordinate.getLatitude()))
                 .build();
     }
 }
